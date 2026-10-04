@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wolverine Stack — BPC-157 + TB-500 | Claims vs Evidence</title>
+<meta name="description" content="An interactive, educational deep-dive into the BPC-157 + TB-500 'Wolverine Stack': what each compound is, the proposed mechanisms, the honest evidence check, and what people online report. Not medical advice.">
+<script>
+/* apply saved theme before first paint (default: dark) */
+try{var _t=localStorage.getItem("ws-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t);}catch(e){}
+</script>
+<style>
+:root{
+  --bg0:#06070d; --bg1:#0a0c17;
+  --ink:#edf0f9; --muted:#a9b1c9; --faint:#7f88a5;
+  --violet:#b79bff; --violet-deep:#7c3aed;
+  --lime:#c9f65e; --lime-deep:#4d7c0f;
+  --amber:#fbbf24; --rose:#fb7185; --cyan:#67e8f9;
+  --card:#0d1020; --card2:#12162b;
+  --line:rgba(255,255,255,.09);
+  --grad:linear-gradient(100deg,#b79bff 10%,#c9f65e 90%);
+  --radius:18px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --disp:"Avenir Next","Segoe UI",-apple-system,BlinkMacSystemFont,Inter,Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font); background:var(--bg0); color:var(--ink);
+  font-size:1.06rem; line-height:1.75; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- ambient background ---------- */
+.bg-grad{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 12% -6%, rgba(124,58,237,.20), transparent 60%),
+    radial-gradient(820px 600px at 88% 22%, rgba(190,242,100,.10), transparent 60%),
+    radial-gradient(1000px 800px at 50% 110%, rgba(56,89,199,.14), transparent 62%),
+    radial-gradient(700px 500px at 78% 78%, rgba(251,113,133,.07), transparent 60%);
+}
+#dots{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.85}
+/* ambient drifting orbs — fill empty space with slow, barely-there motion */
+.orb{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(90px)}
+.o1{width:520px;height:520px;left:-140px;top:6%;background:radial-gradient(circle,rgba(124,58,237,.16),transparent 70%);animation:drift1 38s ease-in-out infinite alternate}
+.o2{width:460px;height:460px;right:-120px;top:38%;background:radial-gradient(circle,rgba(101,163,13,.12),transparent 70%);animation:drift2 46s ease-in-out infinite alternate}
+.o3{width:430px;height:430px;left:24%;bottom:-160px;background:radial-gradient(circle,rgba(103,232,249,.10),transparent 70%);animation:drift3 54s ease-in-out infinite alternate}
+@keyframes drift1{from{transform:translate(0,0)}to{transform:translate(120px,80px)}}
+@keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-100px,-70px)}}
+@keyframes drift3{from{transform:translate(0,0)}to{transform:translate(90px,-80px)}}
+/* completion confetti + toast */
+#confetti{position:fixed;inset:0;z-index:65;pointer-events:none;opacity:0;transition:opacity .6s ease}
+#confetti.show{opacity:1}
+#doneToast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);z-index:66;
+  background:var(--card);border:1px solid var(--line);color:var(--ink);
+  padding:.7rem 1.25rem;border-radius:999px;font-size:.9rem;font-weight:600;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .5s ease,transform .5s ease;
+  box-shadow:0 8px 30px rgba(0,0,0,.28)}
+#doneToast.show{opacity:1;transform:translate(-50%,0)}
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;mix-blend-mode:overlay}
+/* ---------- progress + nav ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;z-index:60;background:var(--grad);border-radius:0 3px 3px 0}
+nav.chapters{position:sticky;top:0;z-index:50;background:rgba(6,7,13,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+nav.chapters .rail{max-width:1080px;margin:0 auto;padding:.65rem 1rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none}
+nav.chapters .rail::-webkit-scrollbar{display:none}
+nav.chapters a{flex:0 0 auto;text-decoration:none;color:var(--muted);font-size:.82rem;font-weight:600;
+  letter-spacing:.04em;padding:.42rem .8rem;border:1px solid var(--line);border-radius:999px;white-space:nowrap;
+  transition:all .25s ease}
+nav.chapters a:hover{color:var(--ink);border-color:rgba(255,255,255,.25)}
+nav.chapters a.active{color:#0a0c14;background:var(--grad);border-color:transparent}
+/* ---------- layout ---------- */
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 1.25rem}
+section.chapter{padding:4.2rem 0 1rem;scroll-margin-top:84px}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:1rem}
+.eyebrow .n{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;border-radius:10px;
+  background:var(--grad);color:#0a0c14;font-size:.85rem;letter-spacing:0}
+h2{font-family:var(--disp);font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:1rem}
+h2 .hl{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{color:var(--muted);font-size:1.12rem;max-width:44rem;margin-bottom:2rem}
+.lede strong{color:var(--ink)}
+/* ---------- hero ---------- */
+.hero{position:relative;z-index:1;text-align:center;padding:5.5rem 1.25rem 3.5rem;max-width:960px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:.55rem;font-size:.78rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink);border:1px solid var(--line);background:rgba(255,255,255,.04);
+  padding:.55rem 1.1rem;border-radius:999px;margin-bottom:1.6rem}
+.badge .dot{width:.6rem;height:.6rem;border-radius:50%;background:var(--rose);box-shadow:0 0 0 0 rgba(251,113,133,.6);animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(251,113,133,.55)}70%{box-shadow:0 0 0 12px rgba(251,113,133,0)}100%{box-shadow:0 0 0 0 rgba(251,113,133,0)}}
+.hero h1{font-family:var(--disp);font-weight:900;letter-spacing:-.03em;line-height:1.02;
+  font-size:clamp(2.6rem,8vw,5.2rem);margin-bottom:1.1rem}
+.hero h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% auto;animation:sheen 9s ease-in-out infinite}
+@keyframes sheen{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero .sub{color:var(--muted);font-size:clamp(1.05rem,2.4vw,1.3rem);max-width:42rem;margin:0 auto 2.2rem}
+.hero .sub strong{color:var(--ink)}
+.quickread{max-width:46rem;margin:0 auto;text-align:left;background:rgba(255,255,255,.035);
+  border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem 1.5rem;display:flex;gap:1rem;align-items:flex-start}
+.quickread .tag{flex:0 0 auto;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--grad);color:#0a0c14;border-radius:8px;padding:.35rem .7rem;margin-top:.2rem}
+.quickread p{color:var(--muted);font-size:.98rem}
+.quickread p strong{color:var(--ink)}
+.hero-stats{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2.4rem}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.5rem;min-width:150px}
+.stat .num{font-family:var(--disp);font-size:2rem;font-weight:800;background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .lbl{font-size:.8rem;color:var(--faint);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.scroll-hint{margin-top:3rem;color:var(--faint);font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(8px);opacity:1}}
+/* ---------- cards & panels ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.5rem}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--ac,var(--grad))}
+.card.violet{--ac:linear-gradient(90deg,var(--violet-deep),var(--violet))}
+.card.lime{--ac:linear-gradient(90deg,var(--lime-deep),var(--lime))}
+.card h3{font-family:var(--disp);font-size:1.35rem;font-weight:800;margin-bottom:.4rem;letter-spacing:-.01em}
+.card h3 .chem{font-size:.85rem;font-weight:600;color:var(--faint);letter-spacing:.08em}
+.card p, .card li{color:var(--muted);font-size:.99rem}
+.card ul{list-style:none;margin-top:.9rem;display:grid;gap:.65rem}
+.card ul li{padding-left:1.5rem;position:relative}
+.card ul li::before{content:"▸";position:absolute;left:0;color:var(--ac2,var(--violet));font-weight:800}
+.card.violet ul li::before{color:var(--violet)}
+.card.lime ul li::before{color:var(--lime)}
+.card strong{color:var(--ink)}
+.plain{margin-top:1.2rem;background:rgba(255,255,255,.035);border:1px dashed rgba(255,255,255,.22);
+  border-radius:12px;padding:1rem 1.2rem;font-size:.96rem;color:var(--muted)}
+.plain b{color:var(--ink)}
+.plain .plabel{display:block;font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:.35rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.8rem;margin-bottom:1.4rem}
+.panel h3{font-family:var(--disp);font-size:1.3rem;font-weight:800;margin-bottom:.8rem}
+.panel p{color:var(--muted);margin-bottom:.8rem}
+.panel p strong, .panel li strong{color:var(--ink)}
+.kv{display:flex;gap:.9rem;align-items:flex-start;padding:.9rem 0;border-top:1px solid var(--line)}
+.kv:first-of-type{border-top:none}
+.kv .k{flex:0 0 auto;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  padding:.3rem .7rem;border-radius:8px;margin-top:.25rem}
+.kv .k.v{background:rgba(183,155,255,.14);color:var(--violet);border:1px solid rgba(183,155,255,.35)}
+.kv .k.l{background:rgba(201,246,94,.12);color:var(--lime);border:1px solid rgba(201,246,94,.35)}
+.kv .k.a{background:rgba(251,191,36,.12);color:var(--amber);border:1px solid rgba(251,191,36,.35)}
+.kv .k.r{background:rgba(251,113,133,.12);color:var(--rose);border:1px solid rgba(251,113,133,.35)}
+.kv p{font-size:.99rem}
+/* ---------- diagram frames ---------- */
+.diagram{background:radial-gradient(600px 300px at 50% 0%,rgba(124,58,237,.12),transparent 70%),#090b15;
+  border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem;margin:0 0 1.4rem;overflow:hidden}
+.diagram svg{display:block;width:100%;height:auto}
+.diagram .cap{text-align:center;color:var(--faint);font-size:.85rem;margin-top:.9rem;letter-spacing:.03em}
+.flow{stroke-dasharray:6 7;animation:dashmove 1.6s linear infinite}
+@keyframes dashmove{to{stroke-dashoffset:-26}}
+.float-slow{animation:floaty 5s ease-in-out infinite}
+.float-slower{animation:floaty 7s ease-in-out infinite reverse}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.glow-pulse{animation:glowp 2.8s ease-in-out infinite}
+@keyframes glowp{0%,100%{opacity:.55}50%{opacity:1}}
+.drift{animation:drift 7s ease-in-out infinite}
+@keyframes drift{0%,100%{transform:translateX(0)}50%{transform:translateX(14px)}}
+.sprout{stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset 2.2s ease .3s}
+.in .sprout{stroke-dashoffset:0}
+.travel{animation:travel 4.5s linear infinite}
+@keyframes travel{from{offset-distance:0%}to{offset-distance:100%}}
+/* ---------- evidence bars ---------- */
+.ebar{margin:1rem 0 1.4rem}
+.ebar .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem}
+.ebar .row .t{font-weight:700;font-size:.98rem}
+.ebar .row .v{font-size:.88rem;color:var(--faint);font-variant-numeric:tabular-nums}
+.ebar .track{height:14px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.ebar .fill{height:100%;width:0;border-radius:999px;transition:width 1.6s cubic-bezier(.2,.7,.2,1)}
+.in .ebar .fill{width:var(--w)}
+.ebar .note{font-size:.85rem;color:var(--faint);margin-top:.45rem}
+/* ---------- anecdotes ---------- */
+.anec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:720px){.anec-grid{grid-template-columns:1fr}}
+.anec{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem;position:relative}
+.anec .stamp{display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.12em;
+  color:var(--amber);border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);
+  padding:.28rem .6rem;border-radius:7px;text-transform:uppercase;margin-bottom:.65rem}
+.anec h4{font-size:1.05rem;font-weight:800;margin-bottom:.5rem}
+.anec-head{display:flex;align-items:center;gap:.85rem;margin-bottom:.55rem}
+.anec-head .thumb{flex:0 0 auto;width:54px;height:54px;border-radius:14px;border:1px solid var(--line)}
+.anec-head h4{margin-bottom:0}
+.anec p{color:var(--muted);font-size:.95rem}
+.anec p strong{color:var(--ink)}
+.anec .caveat{margin-top:.8rem;font-size:.82rem;color:var(--faint);border-top:1px dashed var(--line);padding-top:.7rem}
+.anec{overflow:hidden}
+.anec::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+.folk-note{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-radius:var(--radius);
+  padding:1.2rem 1.4rem;margin-bottom:1.6rem;color:var(--muted);font-size:.98rem}
+.folk-note strong{color:var(--amber)}
+</style>
+<style>
+/* ---------- glossary accordion ---------- */
+.gloss{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+.g-item{border-bottom:1px solid var(--line)}
+.g-item:last-child{border-bottom:none}
+.g-q{width:100%;background:none;border:none;color:var(--ink);font-family:var(--font);font-size:1.02rem;font-weight:700;
+  text-align:left;padding:1.05rem 1.4rem;cursor:pointer;display:flex;justify-content:flex-start;align-items:center;gap:1rem}
+.g-q:hover{background:rgba(255,255,255,.03)}
+.g-q .term{color:var(--violet)}
+.g-item:nth-child(even) .g-q .term{color:var(--lime)}
+.g-q .plus{flex:0 0 auto;width:1.7rem;height:1.7rem;border-radius:50%;border:1px solid var(--line);margin-left:auto;
+  display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--muted);transition:all .3s}
+.g-item.open .g-q .plus{transform:rotate(45deg);background:var(--grad);color:#0a0c14;border-color:transparent}
+.gthumb{flex:0 0 auto;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);
+  animation:gaFloat 5s ease-in-out infinite}
+.gthumb.v2{animation:gaBreathe 4.4s ease-in-out infinite}
+.gthumb.v3{animation:gaTilt 6s ease-in-out infinite}
+@keyframes gaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes gaBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes gaTilt{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.g-a{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.g-a .gsci,.g-a .gex{padding:0 1.4rem 1rem;color:var(--muted);font-size:.95rem}
+.g-a .gsci strong,.g-a .gex strong{color:var(--ink)}
+.gslabel{display:block;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:.35rem}
+.g-a .gex{margin:0 1.4rem 1rem;padding:0 0 0 1rem;border-left:2px solid var(--line)}
+.g-a .plain{margin:0 1.4rem 1.3rem}
+/* ---------- takeaways ---------- */
+.takes{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:720px){.takes{grid-template-columns:1fr}}
+.take{background:var(--card2);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem;display:flex;gap:1rem}
+.take .ic{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:12px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:1.25rem;
+  animation:icBob 4.5s ease-in-out infinite}
+.takes .take:nth-child(2) .ic{animation-delay:-1.2s}
+.takes .take:nth-child(3) .ic{animation-delay:-2.1s}
+.takes .take:nth-child(4) .ic{animation-delay:-.6s}
+.takes .take:nth-child(5) .ic{animation-delay:-3s}
+.takes .take:nth-child(6) .ic{animation-delay:-1.8s}
+@keyframes icBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.take h4{font-size:1.02rem;font-weight:800;margin-bottom:.35rem}
+.take p{color:var(--muted);font-size:.94rem}
+/* ---------- limits + disclaimer ---------- */
+.limits{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem;margin-bottom:1rem}
+.limits h3{font-size:1.15rem;font-weight:800;margin-bottom:.8rem}
+.limits ul{list-style:none;display:grid;gap:.6rem;color:var(--muted);font-size:.97rem}
+.limits li{padding-left:1.5rem;position:relative}
+.limits li::before{content:"—";position:absolute;left:0;color:var(--faint)}
+.limits strong{color:var(--ink)}
+footer.disclaimer{position:relative;z-index:1;margin:3rem 0 0;background:#05060b;border-top:1px solid var(--line);padding:3.2rem 0}
+footer.disclaimer .wrap{max-width:960px}
+footer.disclaimer h2{font-size:1.4rem;margin-bottom:1.2rem}
+footer.disclaimer .dbox{border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.05);
+  border-radius:var(--radius);padding:1.5rem 1.6rem;margin-bottom:1.4rem}
+footer.disclaimer .dbox p{color:var(--muted);font-size:.93rem;margin-bottom:.8rem}
+footer.disclaimer .dbox p:last-child{margin-bottom:0}
+footer.disclaimer .dbox strong{color:var(--ink)}
+footer.disclaimer .fine{color:var(--faint);font-size:.82rem;display:grid;gap:.6rem}
+footer.disclaimer .fine strong{color:var(--muted)}
+.foot-sign{margin-top:2rem;padding-top:1.4rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;
+  flex-wrap:wrap;gap:.6rem;color:var(--faint);font-size:.82rem}
+/* ---------- reveal on scroll ---------- */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.12s}.reveal.d2{transition-delay:.24s}.reveal.d3{transition-delay:.36s}
+/* ---------- misc ---------- */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:1rem 0}
+.num-badge{display:inline-flex;align-items:center;justify-content:center;min-width:2.4rem;height:2.4rem;padding:0 .6rem;
+  border-radius:12px;background:var(--grad);color:#0a0c14;font-weight:800;font-size:1rem;margin-right:.6rem;vertical-align:middle}
+.callout{border-left:3px solid;border-image:linear-gradient(180deg,var(--violet),var(--lime)) 1;
+  padding:.4rem 0 .4rem 1.2rem;margin:1.4rem 0;color:var(--muted);font-size:1rem}
+.callout strong{color:var(--ink)}
+@media(max-width:560px){
+  body{font-size:1rem}
+  section.chapter{padding:3rem 0 .5rem}
+  .hero{padding:4rem 1.25rem 2.5rem}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .flow,.float-slow,.float-slower,.glow-pulse,.travel,.drift,.gthumb,.orb,.take .ic,.hero h1 .g{animation:none}
+  .sprout{transition:none}
+  .toc-pill{transition:none}
+  .scroll-hint{animation:none}
+  #dots{display:none}
+}
+/* ---------- sidebar TOC (desktop) ---------- */
+.toc{display:none}
+@media(min-width:1200px){
+  nav.chapters{display:none}
+  body{padding-left:248px}
+  .toc{display:flex;position:fixed;left:0;top:0;bottom:0;width:248px;z-index:45;
+    flex-direction:column;justify-content:center;gap:.2rem;
+    padding:2rem 1.1rem 2rem 1.4rem;
+    background:rgba(6,7,13,.72);backdrop-filter:blur(14px);
+    border-right:1px solid var(--line)}
+  .toc .brand{font-family:var(--disp);font-weight:800;font-size:.98rem;letter-spacing:-.01em;
+    margin-bottom:1.2rem;line-height:1.35;color:var(--ink);
+    text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
+  .toc .brand .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .toc a{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--muted);
+    font-size:.86rem;font-weight:600;padding:.55rem .7rem;border-radius:10px;
+    border:1px solid transparent;transition:all .22s ease}
+  .toc a .n{font-size:.72rem;font-weight:800;color:var(--faint);width:1.7rem;flex:0 0 auto;
+    font-variant-numeric:tabular-nums;letter-spacing:.04em}
+  .toc a:hover{color:var(--ink);background:rgba(255,255,255,.045)}
+  .toc a.active{color:#0a0c14;font-weight:700}
+  .toc a.active .n{color:#0a0c14}
+  .toc a{position:relative;z-index:1}
+  .toc-pill{position:absolute;left:1.4rem;top:0;width:calc(100% - 2.5rem);height:40px;border-radius:10px;
+    background:var(--grad);z-index:0;opacity:0;pointer-events:none;
+    transition:transform .5s cubic-bezier(.25,.8,.25,1),opacity .35s ease,height .3s ease}
+  .toc .mini{margin-top:1.5rem;font-size:.7rem;color:var(--faint);letter-spacing:.14em;
+    text-transform:uppercase;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
+  .toc .mini #tocPct{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    font-size:.85rem;font-weight:800;letter-spacing:0;font-variant-numeric:tabular-nums}
+  .toc .mini-bar{height:3px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:.55rem;overflow:hidden}
+  .toc .mini-bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px}
+}
+/* ---------- theme toggle button ---------- */
+#themeToggle{position:fixed;top:12px;right:14px;z-index:70;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:transform .25s ease,background .25s ease;
+  box-shadow:0 4px 18px rgba(0,0,0,.25)}
+#themeToggle:hover{transform:scale(1.08)}
+#themeToggle:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+#themeToggle svg{width:20px;height:20px}
+[data-theme="dark"] #themeToggle .ic-sun{display:block}
+[data-theme="dark"] #themeToggle .ic-moon{display:none}
+[data-theme="light"] #themeToggle .ic-sun{display:none}
+[data-theme="light"] #themeToggle .ic-moon{display:block}
+[data-theme="dark"]{color-scheme:dark}
+nav.chapters .rail{padding-right:3.8rem}
+/* ---------- light theme: soft gray, easy on the eyes ---------- */
+[data-theme="light"]{
+  --bg0:#e3e3e0; --bg1:#d7d7d3;
+  --ink:#232322; --muted:#5b5b57; --faint:#8b8b85;
+  --violet:#6d28d9; --violet-deep:#5b21b6;
+  --lime:#4d7c0f; --lime-deep:#3f6212;
+  --amber:#b45309; --rose:#be123c; --cyan:#0e7490;
+  --card:#ececea; --card2:#e2e2de;
+  --line:rgba(35,35,35,.16);
+  --grad:linear-gradient(100deg,#7c3aed 10%,#65a30d 90%);
+  color-scheme:light;
+}
+[data-theme="light"] .bg-grad{background:
+  radial-gradient(900px 620px at 12% -6%, rgba(124,58,237,.10), transparent 60%),
+  radial-gradient(820px 600px at 88% 22%, rgba(101,163,13,.10), transparent 60%),
+  radial-gradient(1000px 800px at 50% 110%, rgba(56,89,199,.08), transparent 62%),
+  radial-gradient(700px 500px at 78% 78%, rgba(190,24,93,.06), transparent 60%)}
+[data-theme="light"] nav.chapters{background:rgba(227,227,224,.88)}
+[data-theme="light"] .toc{background:rgba(227,227,224,.85)}
+[data-theme="light"] .diagram{background:radial-gradient(600px 300px at 50% 0%,rgba(124,58,237,.08),transparent 70%),#e8e8e5}
+[data-theme="light"] footer.disclaimer{background:#d4d4d0}
+[data-theme="light"] .ebar .track{background:rgba(35,35,35,.10)}
+[data-theme="light"] .plain{border-color:rgba(35,35,35,.35)}
+[data-theme="light"] .limits{background:rgba(35,35,35,.05)}
+[data-theme="light"] .quickread{background:rgba(255,255,255,.45)}
+[data-theme="light"] #themeToggle{box-shadow:0 4px 18px rgba(35,35,35,.2)}
+[data-theme="light"] .card::before{opacity:.85}
+/* recolor hardcoded SVG fills/strokes for light backgrounds */
+[data-theme="light"] svg [fill="#b79bff"]{fill:#6d28d9}
+[data-theme="light"] svg [fill="#c9f65e"]{fill:#4d7c0f}
+[data-theme="light"] svg [fill="#7f88a5"]{fill:#716c5e}
+[data-theme="light"] svg [fill="#a9b1c9"]{fill:#57534a}
+[data-theme="light"] svg [fill="#edf0f9"]{fill:#26221a}
+[data-theme="light"] svg [fill="#fb7185"]{fill:#e11d48}
+[data-theme="light"] svg [fill="#3a4160"]{fill:#d9d3c1}
+[data-theme="light"] svg [stroke="#b79bff"]{stroke:#6d28d9}
+[data-theme="light"] svg [stroke="#c9f65e"]{stroke:#4d7c0f}
+[data-theme="light"] svg [stroke="#edf0f9"]{stroke:#57534a}
+[data-theme="light"] svg [stroke="#3a4160"]{stroke:#d9d3c1}
+</style>
+</head>
+<body>
+<div class="bg-grad"></div>
+<canvas id="dots" aria-hidden="true"></canvas>
+<div class="orb o1" aria-hidden="true"></div>
+<div class="orb o2" aria-hidden="true"></div>
+<div class="orb o3" aria-hidden="true"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div id="doneToast" role="status">🎉 You reached the end — nice work getting through it all.</div>
+<div id="progress"></div>
+<button id="themeToggle" aria-label="Toggle light / dark mode" title="Toggle light / dark mode">
+  <svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  <svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<nav class="chapters" aria-label="Page chapters">
+  <div class="rail" id="rail">
+    <a href="#ch1" data-spy="ch1">The Two</a>
+    <a href="#ch2" data-spy="ch2">Why Stack Them</a>
+    <a href="#ch3" data-spy="ch3">How They Might Work</a>
+    <a href="#ch4" data-spy="ch4">Evidence Check</a>
+    <a href="#ch5" data-spy="ch5">What People Say</a>
+    <a href="#ch6" data-spy="ch6">Safety</a>
+    <a href="#ch7" data-spy="ch7">Glossary</a>
+    <a href="#ch8" data-spy="ch8">Takeaways</a>
+  </div>
+</nav>
+
+<aside class="toc" aria-label="Table of contents">
+  <div class="toc-pill" aria-hidden="true"></div>
+  <div class="brand">The <span class="g">Wolverine</span> Stack</div>
+  <a href="#ch1" data-spy="ch1"><span class="n">01</span>The Two</a>
+  <a href="#ch2" data-spy="ch2"><span class="n">02</span>Why Stack Them</a>
+  <a href="#ch3" data-spy="ch3"><span class="n">03</span>How They Might Work</a>
+  <a href="#ch4" data-spy="ch4"><span class="n">04</span>Evidence Check</a>
+  <a href="#ch5" data-spy="ch5"><span class="n">05</span>What People Say</a>
+  <a href="#ch6" data-spy="ch6"><span class="n">06</span>Safety</a>
+  <a href="#ch7" data-spy="ch7"><span class="n">07</span>Glossary</a>
+  <a href="#ch8" data-spy="ch8"><span class="n">08</span>Takeaways</a>
+  <div class="mini">Reading progress <span id="tocPct">0%</span></div>
+  <div class="mini-bar"><i id="tocProg"></i></div>
+</aside>
+
+<header class="hero">
+  <div class="badge"><span class="dot"></span> Investigational · Not FDA-approved · Educational only</div>
+  <h1>The <span class="g">Wolverine</span> Stack</h1>
+  <p class="sub"><strong>BPC-157 + TB-500</strong> — the internet's most famous peptide pairing for injury recovery. This page walks through what each compound is, why people combine them, what the science actually supports, and what forum users report. <strong>Claims vs. evidence, side by side.</strong></p>
+  <div class="quickread reveal">
+    <span class="tag">The short version</span>
+    <p><strong>Two investigational compounds, zero robust human trials between them.</strong> The stack exists because their <em>proposed</em> mechanisms sound complementary — not because a clinical trial showed the combination works. Both are banned in tested sport. Nothing here is medical advice or a recommendation to use anything.</p>
+  </div>
+  <div class="hero-stats">
+    <div class="stat reveal"><div class="num" data-count="15">0</div><div class="lbl">amino acids in BPC-157</div></div>
+    <div class="stat reveal d1"><div class="num" data-count="7">0</div><div class="lbl">amino acids in TB-500</div></div>
+    <div class="stat reveal d2"><div class="num" data-count="0">0</div><div class="lbl">robust human trials of the pair</div></div>
+    <div class="stat reveal d3"><div class="num"><span data-count="35">0</span>/36</div><div class="lbl">BPC-157 studies preclinical</div></div>
+  </div>
+  <div class="scroll-hint">Scroll &nbsp;↓</div>
+</header>
+
+<main class="wrap">
+<!-- ================= CHAPTER 1 : MEET THE TWO ================= -->
+<section class="chapter" id="ch1">
+  <div class="eyebrow reveal"><span class="n">01</span> Meet the two</div>
+  <h2 class="reveal">Two fragments, two <span class="hl">different stories</span></h2>
+  <p class="lede reveal">The "stack" is just these two short protein fragments taken together. They come from completely different places in biology and are proposed to do completely different jobs. <strong>Nothing below is proven in humans</strong> — these are the claims researchers and forums talk about.</p>
+
+  <div class="diagram reveal">
+    <svg viewBox="0 0 900 240" role="img" aria-label="Diagram comparing the amino-acid chain lengths of BPC-157 and TB-500">
+      <defs>
+        <linearGradient id="gv" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#b79bff"/>
+        </linearGradient>
+        <linearGradient id="gl" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#4d7c0f"/><stop offset="1" stop-color="#c9f65e"/>
+        </linearGradient>
+      </defs>
+      <text x="20" y="34" fill="#b79bff" font-size="20" font-weight="800" font-family="inherit">BPC-157</text>
+      <text x="20" y="58" fill="#7f88a5" font-size="14" font-family="inherit">15 amino acids — a fragment of a stomach-protecting protein</text>
+      <g class="float-slow">
+        <rect x="20" y="80" width="860" height="46" rx="23" fill="rgba(124,58,237,.10)" stroke="rgba(183,155,255,.35)"/>
+        <g fill="url(#gv)">
+          <circle cx="60" cy="103" r="13"/><circle cx="113" cy="103" r="13"/><circle cx="166" cy="103" r="13"/><circle cx="219" cy="103" r="13"/><circle cx="272" cy="103" r="13"/><circle cx="325" cy="103" r="13"/><circle cx="378" cy="103" r="13"/><circle cx="431" cy="103" r="13"/><circle cx="484" cy="103" r="13"/><circle cx="537" cy="103" r="13"/><circle cx="590" cy="103" r="13"/><circle cx="643" cy="103" r="13"/><circle cx="696" cy="103" r="13"/><circle cx="749" cy="103" r="13"/><circle cx="802" cy="103" r="13"/>
+        </g>
+        <text x="845" y="108" fill="#b79bff" font-size="15" font-weight="700" font-family="inherit">15</text>
+      </g>
+      <text x="20" y="168" fill="#c9f65e" font-size="20" font-weight="800" font-family="inherit">TB-500</text>
+      <text x="20" y="192" fill="#7f88a5" font-size="14" font-family="inherit">7 amino acids — the active tip (positions 17–23) of thymosin beta-4</text>
+      <g class="float-slower">
+        <rect x="20" y="206" width="420" height="0" rx="0" fill="none"/>
+        <g fill="url(#gl)">
+          <circle cx="60" cy="216" r="13"/><circle cx="113" cy="216" r="13"/><circle cx="166" cy="216" r="13"/><circle cx="219" cy="216" r="13"/><circle cx="272" cy="216" r="13"/><circle cx="325" cy="216" r="13"/><circle cx="378" cy="216" r="13"/>
+        </g>
+        <text x="415" y="222" fill="#c9f65e" font-size="15" font-weight="700" font-family="inherit">7</text>
+        <text x="450" y="222" fill="#7f88a5" font-size="14" font-family="inherit">…cut from a 43-unit parent protein found in almost every cell</text>
+      </g>
+    </svg>
+    <div class="cap">Each bead is one amino acid. Short chains like these are called peptides.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card violet reveal">
+      <h3>BPC-157 <span class="chem">· Body Protection Compound</span></h3>
+      <ul>
+        <li><strong>15 amino acids</strong> copied from a protective protein found in human stomach juice.</li>
+        <li>Unusual trait: it <strong>survives stomach acid</strong> in lab tests — most peptides don't, which is why oral versions exist on the gray market.</li>
+        <li><strong>Proposed</strong> actions: encouraging new tiny blood vessels, dialing down inflammatory signals, and nudging tendon and connective-tissue cells toward repair.</li>
+        <li>Almost all supporting work is in <strong>animals or cell cultures</strong>, not people.</li>
+      </ul>
+      <div class="plain"><span class="plabel">Plain English</span><b>Think of it as a small piece of a stomach-guarding protein</b> that researchers are studying for possible repair signals — especially where blood flow and connective tissue are involved.</div>
+    </div>
+    <div class="card lime reveal d1">
+      <h3>TB-500 <span class="chem">· Thymosin Beta-4 fragment</span></h3>
+      <ul>
+        <li><strong>7 amino acids</strong> — just the tip (units 17–23) of <strong>thymosin beta-4</strong>, a 43-unit protein present in nearly every human cell.</li>
+        <li><strong>Proposed</strong> action: latches onto <strong>actin</strong> (the cell's internal scaffolding) and helps cells <strong>migrate toward damaged tissue</strong>.</li>
+        <li>The <em>parent</em> protein reached mid-stage (Phase 2) trials for some uses — <strong>the 7-unit fragment itself has zero human trials</strong>.</li>
+        <li>A rodent observation linked the parent protein to <strong>hair growth</strong> — a long way from human evidence.</li>
+      </ul>
+      <div class="plain"><span class="plabel">Plain English</span><b>Imagine a foreman molecule that helps repair crews (your cells) travel to the construction site (the injury).</b> That's the theory — unproven in people.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHAPTER 2 : WHY STACK THEM ================= -->
+<section class="chapter" id="ch2">
+  <div class="eyebrow reveal"><span class="n">02</span> The stack idea</div>
+  <h2 class="reveal">Why do people <span class="hl">combine</span> them?</h2>
+  <p class="lede reveal">Nobody ran a clinical trial on the combination and declared it a winner. The stack was born on internet forums around <strong>2019–2020</strong>, named after the X-Men character's rapid healing — and it spread because the two <em>theories</em> sound like they cover different angles.</p>
+
+  <div class="diagram reveal">
+    <svg viewBox="0 0 900 300" role="img" aria-label="Diagram showing the forum logic for stacking BPC-157 and TB-500">
+      <defs>
+        <radialGradient id="fv" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#7c3aed" stop-opacity=".55"/><stop offset="1" stop-color="#7c3aed" stop-opacity=".12"/>
+        </radialGradient>
+        <radialGradient id="fl" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#65a30d" stop-opacity=".5"/><stop offset="1" stop-color="#65a30d" stop-opacity=".12"/>
+        </radialGradient>
+      </defs>
+      <g class="float-slow">
+        <circle cx="330" cy="150" r="120" fill="url(#fv)" stroke="#b79bff" stroke-width="2"/>
+        <text x="330" y="138" text-anchor="middle" fill="#b79bff" font-size="22" font-weight="800" font-family="inherit">BPC-157</text>
+        <text x="330" y="164" text-anchor="middle" fill="#a9b1c9" font-size="14" font-family="inherit">blood flow · signals</text>
+        <text x="330" y="186" text-anchor="middle" fill="#a9b1c9" font-size="14" font-family="inherit">tissue repair cues</text>
+      </g>
+      <g class="float-slower">
+        <circle cx="570" cy="150" r="120" fill="url(#fl)" stroke="#c9f65e" stroke-width="2"/>
+        <text x="570" y="138" text-anchor="middle" fill="#c9f65e" font-size="22" font-weight="800" font-family="inherit">TB-500</text>
+        <text x="570" y="164" text-anchor="middle" fill="#a9b1c9" font-size="14" font-family="inherit">cell migration</text>
+        <text x="570" y="186" text-anchor="middle" fill="#a9b1c9" font-size="14" font-family="inherit">actin scaffolding</text>
+      </g>
+      <g class="glow-pulse">
+        <ellipse cx="450" cy="150" rx="72" ry="92" fill="rgba(255,255,255,.06)" stroke="#edf0f9" stroke-width="1.5" stroke-dasharray="5 5"/>
+        <text x="450" y="142" text-anchor="middle" fill="#edf0f9" font-size="16" font-weight="800" font-family="inherit">THE STACK</text>
+        <text x="450" y="164" text-anchor="middle" fill="#a9b1c9" font-size="12.5" font-family="inherit">forum theory:</text>
+        <text x="450" y="182" text-anchor="middle" fill="#a9b1c9" font-size="12.5" font-family="inherit">two angles, one goal</text>
+      </g>
+      <text x="450" y="282" text-anchor="middle" fill="#7f88a5" font-size="14" font-family="inherit">Overlapping circles are a folk theory — not a measured synergy.</text>
+    </svg>
+    <div class="cap">The forum pitch: one compound for signaling and blood flow, one for cell movement — "cover more angles."</div>
+  </div>
+
+  <div class="panel reveal">
+    <h3>The forum logic, translated</h3>
+    <div class="kv"><span class="k v">BPC-157</span><p>Talked about as the <strong>systemic signaler</strong> — discussed for gut, tendon, and whole-body repair signaling in animal work.</p></div>
+    <div class="kv"><span class="k l">TB-500</span><p>Talked about as the <strong>site worker</strong> — discussed for helping cells physically move to where damage happened.</p></div>
+    <div class="kv"><span class="k a">Reality check</span><p>This tidy division is <strong>forum lore, not established pharmacology</strong>. Neither compound has proven pharmacology in humans at all.</p></div>
+    <div class="plain"><span class="plabel">Plain English</span><b>Two different repair theories in one stack — that's the sales pitch.</b> It sounds clever, but "sounds complementary" is not the same as "shown to work together."</div>
+  </div>
+</section>
+
+<!-- ================= CHAPTER 3 : MECHANISMS ================= -->
+<section class="chapter" id="ch3">
+  <div class="eyebrow reveal"><span class="n">03</span> Proposed mechanisms</div>
+  <h2 class="reveal">How they're <span class="hl">supposed</span> to work</h2>
+  <p class="lede reveal">Every mechanism below is <strong>proposed, not proven</strong> — drawn from animal and cell studies. Watch for the word <em>proposed</em>: it's doing heavy lifting on this entire page.</p>
+
+  <div class="grid2">
+    <div class="card violet reveal">
+      <h3>BPC-157 <span class="chem">· proposed pathways</span></h3>
+      <div class="diagram" style="margin:1rem 0;padding:1rem">
+        <svg viewBox="0 0 400 210" role="img" aria-label="Animated diagram of capillary sprouting during angiogenesis">
+          <line x1="16" y1="142" x2="384" y2="142" stroke="#3a4160" stroke-width="3" stroke-linecap="round"/>
+          <line x1="16" y1="164" x2="384" y2="164" stroke="#3a4160" stroke-width="3" stroke-linecap="round"/>
+          <g fill="#b79bff" opacity=".55">
+            <circle cx="52" cy="142" r="4"/><circle cx="102" cy="164" r="4"/><circle cx="152" cy="142" r="4"/>
+            <circle cx="202" cy="164" r="4"/><circle cx="252" cy="142" r="4"/><circle cx="302" cy="164" r="4"/><circle cx="352" cy="142" r="4"/>
+          </g>
+          <line x1="16" y1="153" x2="384" y2="153" stroke="#b79bff" stroke-width="3" stroke-linecap="round" class="flow" opacity=".45"/>
+          <path class="sprout" d="M140 142 C 140 112, 158 104, 168 78" fill="none" stroke="#b79bff" stroke-width="4" stroke-linecap="round"/>
+          <path class="sprout" d="M262 142 C 262 116, 244 108, 238 84" fill="none" stroke="#b79bff" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="168" cy="73" r="7" fill="#c9f65e" class="glow-pulse"/>
+          <circle cx="238" cy="79" r="7" fill="#c9f65e" class="glow-pulse"/>
+          <text x="200" y="186" text-anchor="middle" fill="#7f88a5" font-size="13" font-family="inherit"><tspan x="200" dy="0">existing capillary (walls + endothelial cells)</tspan><tspan x="200" dy="17">new sprouts grow outward, tip cell leading</tspan></text>
+        </svg>
+      </div>
+      <ul>
+        <li><strong>New vessel growth</strong> — may nudge the signals that sprout tiny capillaries toward injured tissue.</li>
+        <li><strong>Cell signaling</strong> — studied for effects on growth-factor and nitric-oxide pathways in animals.</li>
+        <li><strong>Connective tissue</strong> — animal work on tendon fibroblasts (the cells that maintain tendons).</li>
+      </ul>
+      <div class="plain"><span class="plabel">Plain English</span><b>Possibly improves the "supply lines"</b> — blood flow and chemical repair signals — around damaged tissue. In rats, not people.</div>
+    </div>
+    <div class="card lime reveal d1">
+      <h3>TB-500 <span class="chem">· proposed pathways</span></h3>
+      <div class="diagram" style="margin:1rem 0;padding:1rem">
+        <svg viewBox="0 0 400 210" role="img" aria-label="Animated diagram of a cell extending actin filaments toward an injury signal">
+          <defs>
+            <radialGradient id="injuryGlow" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="#fb7185" stop-opacity=".35"/>
+              <stop offset="1" stop-color="#fb7185" stop-opacity="0"/>
+            </radialGradient>
+            <path id="sigpath" d="M318 96 C 262 96, 222 108, 180 114" fill="none"/>
+          </defs>
+          <circle cx="330" cy="96" r="48" fill="url(#injuryGlow)"/>
+          <g class="glow-pulse">
+            <path d="M330 80 l7 14 15 2 -11 11 3 15 -14 -7 -14 7 3 -15 -11 -11 15 -2 z" fill="#fb7185"/>
+          </g>
+          <circle r="4" fill="#fb7185" opacity=".4"><animateMotion dur="5s" repeatCount="indefinite"><mpath href="#sigpath"/></animateMotion></circle>
+          <circle r="3" fill="#fb7185" opacity=".35"><animateMotion dur="5s" begin="1.6s" repeatCount="indefinite"><mpath href="#sigpath"/></animateMotion></circle>
+          <circle r="3" fill="#fb7185" opacity=".3"><animateMotion dur="5s" begin="3.2s" repeatCount="indefinite"><mpath href="#sigpath"/></animateMotion></circle>
+          <g class="drift">
+            <ellipse cx="108" cy="120" rx="44" ry="34" fill="rgba(183,155,255,.13)" stroke="#b79bff" stroke-width="2"/>
+            <circle cx="100" cy="120" r="12" fill="rgba(183,155,255,.4)"/>
+            <g stroke="#c9f65e" stroke-width="2.5" stroke-linecap="round">
+              <line x1="148" y1="104" x2="172" y2="100" class="flow" opacity=".9"/>
+              <line x1="150" y1="120" x2="178" y2="118" class="flow" opacity=".9"/>
+              <line x1="148" y1="136" x2="170" y2="138" class="flow" opacity=".9"/>
+            </g>
+          </g>
+          <text x="108" y="172" text-anchor="middle" fill="#7f88a5" font-size="13" font-family="inherit">cell (nucleus inside)</text>
+          <text x="330" y="162" text-anchor="middle" fill="#7f88a5" font-size="13" font-family="inherit">injury site</text>
+          <text x="250" y="140" text-anchor="middle" fill="#7f88a5" font-size="12" font-family="inherit">injury signal</text>
+          <text x="168" y="86" text-anchor="middle" fill="#7f88a5" font-size="12" font-family="inherit">actin filaments</text>
+        </svg>
+      </div>
+      <ul>
+        <li><strong>Actin binding</strong> — the fragment is proposed to grab G-actin, a building block of the cell's internal skeleton.</li>
+        <li><strong>Cell migration</strong> — by organizing that skeleton, cells may crawl more efficiently toward damage.</li>
+        <li><strong>Less scarring (theory)</strong> — animal work hints at more orderly tissue remodeling; strictly preliminary.</li>
+      </ul>
+      <div class="plain"><span class="plabel">Plain English</span><b>Possibly helps repair cells commute to the damage faster</b> by tidying up their internal scaffolding. Again: animal and cell data.</div>
+    </div>
+  </div>
+  <div class="callout reveal"><strong>The honest summary:</strong> one is studied for <em>signals and supply lines</em>, the other for <em>cell movement</em> — and both stories come almost entirely from non-human research.</div>
+</section>
+<!-- ================= CHAPTER 4 : EVIDENCE CHECK ================= -->
+<section class="chapter" id="ch4">
+  <div class="eyebrow reveal"><span class="n">04</span> Honest evidence check</div>
+  <h2 class="reveal">What the science <span class="hl">actually</span> supports</h2>
+  <p class="lede reveal">This is the part most hype posts skip. Stack the enthusiasm of ten forums against the published research and the mismatch is stark: <strong>nearly everything sits in the "animal and lab" column</strong>.</p>
+
+  <div class="panel reveal">
+    <h3><span class="num-badge">BPC-157</span> The research landscape</h3>
+    <div class="ebar" style="--w:97%">
+      <div class="row"><span class="t">Animal &amp; lab studies</span><span class="v">35 of 36 studies</span></div>
+      <div class="track"><div class="fill" style="background:linear-gradient(90deg,#7c3aed,#b79bff)"></div></div>
+      <div class="note">Per a 2025 review: 35 of 36 published BPC-157 studies were preclinical (animal or cell work).</div>
+    </div>
+    <div class="ebar" style="--w:4%">
+      <div class="row"><span class="t">Robust controlled human trials</span><span class="v">≈ 0</span></div>
+      <div class="track"><div class="fill" style="background:linear-gradient(90deg,#4d7c0f,#c9f65e)"></div></div>
+      <div class="note">No large, well-controlled human trials establishing safety or effectiveness for injury recovery.</div>
+    </div>
+  </div>
+
+  <div class="panel reveal">
+    <h3><span class="num-badge">TB-500</span> The research landscape</h3>
+    <div class="ebar" style="--w:3%">
+      <div class="row"><span class="t">Human trials of the TB-500 fragment itself</span><span class="v">0</span></div>
+      <div class="track"><div class="fill" style="background:linear-gradient(90deg,#7c3aed,#b79bff)"></div></div>
+      <div class="note">Zero published human trials of the 7-amino-acid fragment sold as "TB-500."</div>
+    </div>
+    <div class="ebar" style="--w:38%">
+      <div class="row"><span class="t">Parent protein (thymosin beta-4) — reached Phase 2</span><span class="v">mid-stage trials</span></div>
+      <div class="track"><div class="fill" style="background:linear-gradient(90deg,#4d7c0f,#c9f65e)"></div></div>
+      <div class="note">The full 43-unit parent reached Phase 2 for certain uses. <strong>A fragment is not the parent</strong> — results don't transfer automatically.</div>
+    </div>
+  </div>
+
+  <div class="panel reveal">
+    <h3>Status check — the non-negotiables</h3>
+    <div class="kv"><span class="k r">FDA</span><p><strong>Neither compound is FDA-approved</strong> as a medicine for any use. Both are investigational / research chemicals.</p></div>
+    <div class="kv"><span class="k r">WADA</span><p><strong>Both are banned in tested sport.</strong> BPC-157 falls under non-approved substances; TB-500 (a thymosin beta-4 derivative) is explicitly listed. Tested athletes risk sanctions.</p></div>
+    <div class="kv"><span class="k a">Regulation</span><p>Products are sold through <strong>unregulated gray-market channels</strong> — independent testing has repeatedly found mislabeled or contaminated vials in this space.</p></div>
+    <div class="plain"><span class="plabel">Plain English</span><b>Almost everything "known" comes from rats and petri dishes.</b> No human trials of the stack, no human trials of TB-500 at all, and essentially none of BPC-157 that meet modern standards.</div>
+  </div>
+</section>
+
+<!-- ================= CHAPTER 5 : ANECDOTES ================= -->
+<section class="chapter" id="ch5">
+  <div class="eyebrow reveal"><span class="n">05</span> What people online say</div>
+  <h2 class="reveal">Forum reports: <span class="hl">stories, not data</span></h2>
+  <p class="lede reveal">Reddit threads and peptide forums are full of personal reports. They're worth reading as <strong>culture</strong> — what people hope for and believe — but they are not evidence. No controls, no verification, heavy survivorship bias: <strong>success stories get upvoted, "nothing happened" posts don't.</strong></p>
+
+  <div class="folk-note reveal"><strong>How to read this section:</strong> every card below is a <em>recurring theme</em> paraphrased from many anonymous posts — not quotes from identifiable people, and not claims this page endorses. Timelines people mention ("a few weeks") are their impressions, not findings.</div>
+
+  <div class="anec-grid">
+    <div class="anec reveal"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(183,155,255,.12)"/><rect x="14" y="28" width="20" height="9" rx="4.5" fill="#b79bff" transform="rotate(-24 24 32)"/><rect x="32" y="28" width="20" height="9" rx="4.5" fill="#b79bff" transform="rotate(24 42 32)"/><circle cx="33" cy="33" r="6" fill="#c9f65e"/><path d="M50 12l1.6 3.6 3.6 1.6-3.6 1.6L50 22.4l-1.6-3.6-3.6-1.6 3.6-1.6z" fill="#c9f65e"/></svg>
+        <h4>The "faster-feeling" recovery</h4>
+      </div>
+      <p>The most common theme: lifters and runners describing nagging <strong>tendon, elbow, shoulder, or knee issues</strong> that seemed to calm down over several weeks while using the stack.</p>
+      <div class="caveat">Caveat: rest, reduced training load, and placebo all produce exactly this pattern. Nobody posting can separate those out.</div>
+    </div>
+    <div class="anec reveal d1"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(201,246,94,.12)"/><rect x="14" y="30" width="36" height="4" rx="2" fill="#c9f65e"/><rect x="18" y="22" width="5" height="20" rx="2.5" fill="#c9f65e"/><rect x="41" y="22" width="5" height="20" rx="2.5" fill="#c9f65e"/><rect x="25" y="26" width="4" height="12" rx="2" fill="#b79bff"/><rect x="35" y="26" width="4" height="12" rx="2" fill="#b79bff"/></svg>
+        <h4>The comeback story</h4>
+      </div>
+      <p>Posters describing <strong>returning to training sooner than expected</strong> after strains or minor procedures — often framed as "I was back weeks early."</p>
+      <div class="caveat">Caveat: "expected" timelines are guesses, and motivated people rehab harder regardless of what they're taking.</div>
+    </div>
+    <div class="anec reveal"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(183,155,255,.12)"/><path d="M22 12c-4 8 4 12 0 20s4 12 0 20" stroke="#b79bff" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M32 12c-4 8 4 12 0 20s4 12 0 20" stroke="#c9f65e" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M42 12c-4 8 4 12 0 20s4 12 0 20" stroke="#b79bff" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
+        <h4>The hair talk</h4>
+      </div>
+      <p>TB-500 threads regularly mention <strong>thicker-feeling hair or faster growth</strong>. This traces back to a genuine rodent observation with the parent protein — then got telephone-gamed into human certainty.</p>
+      <div class="caveat">Caveat: zero human data. Hair cycles change with seasons, stress, and age on their own.</div>
+    </div>
+    <div class="anec reveal d1"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(201,246,94,.12)"/><rect x="10" y="18" width="44" height="28" rx="6" fill="none" stroke="#7f88a5" stroke-width="2.5"/><path d="M16 33h9l3-6 3 6h17" stroke="#7f88a5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h4>The quiet "nothing happened"</h4>
+      </div>
+      <p>Sprinkled through every long thread: <strong>"felt zero difference,"</strong> "expensive placebo," "couldn't tell." These rarely get upvoted — but they're numerous.</p>
+      <div class="caveat">This is the selection-bias filter in action: boring non-results sink while exciting stories float.</div>
+    </div>
+    <div class="anec reveal"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(183,155,255,.12)"/><rect x="24" y="22" width="16" height="26" rx="4" fill="none" stroke="#b79bff" stroke-width="2.5"/><rect x="26" y="14" width="12" height="8" rx="2" fill="#b79bff"/><text x="32" y="43" text-anchor="middle" fill="#fb7185" font-size="17" font-weight="800" font-family="inherit">?</text></svg>
+        <h4>The quality scares</h4>
+      </div>
+      <p>Recurring complaints about <strong>underfilled vials, mystery side effects, and wildly inconsistent batches</strong> between sellers — plus irritation or redness some users attribute to bad product.</p>
+      <div class="caveat">Caveat: anonymous and unverifiable — but consistent with independent lab testing that keeps finding mislabeled gray-market peptides.</div>
+    </div>
+    <div class="anec reveal d1"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(201,246,94,.12)"/><circle cx="24" cy="32" r="11" fill="rgba(183,155,255,.25)" stroke="#b79bff" stroke-width="2.5"/><circle cx="40" cy="32" r="11" fill="rgba(201,246,94,.25)" stroke="#c9f65e" stroke-width="2.5"/><text x="32" y="37" text-anchor="middle" fill="#edf0f9" font-size="13" font-weight="800" font-family="inherit">vs</text></svg>
+        <h4>The "stack vs solo" debate</h4>
+      </div>
+      <p>Endless threads argue whether the <strong>combination beats either alone</strong>. Nobody has data — it's vibes versus vibes, with both sides citing the same handful of rat studies.</p>
+      <div class="caveat">Caveat: synergy is a claim that requires a trial designed to test synergy. None exists.</div>
+    </div>
+    <div class="anec reveal"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(183,155,255,.12)"/><path d="M28 10h8v10c6 2 10 8 10 16 0 10-8 16-16 16-7 0-12-4-13-10" fill="none" stroke="#b79bff" stroke-width="3.5" stroke-linecap="round"/><circle cx="46" cy="46" r="3" fill="#c9f65e"/></svg>
+        <h4>The gut stories</h4>
+      </div>
+      <p>Given BPC-157's origin in a stomach protein, digestive anecdotes are everywhere — posters describing settled stomachs, less bloating, or calmer guts over weeks.</p>
+      <div class="caveat">Caveat: gut symptoms swing with diet, stress, and time; almost nobody posting controls for any of it.</div>
+    </div>
+    <div class="anec reveal d1"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(201,246,94,.12)"/><circle cx="28" cy="28" r="12" fill="none" stroke="#c9f65e" stroke-width="3.5"/><line x1="37" y1="37" x2="48" y2="48" stroke="#c9f65e" stroke-width="3.5" stroke-linecap="round"/><text x="28" y="34" text-anchor="middle" fill="#b79bff" font-size="16" font-weight="800" font-family="inherit">?</text></svg>
+        <h4>The skeptic corner</h4>
+      </div>
+      <p>Every big thread draws science-minded posters citing the actual reviews — quoting the 35-of-36 preclinical figure, calling the stack an expensive placebo, and getting ratioed for it.</p>
+      <div class="caveat">Caveat: the skeptics hold the stronger evidence — though "no proof it works" still isn't proof it does nothing.</div>
+    </div>
+    <div class="anec reveal"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(183,155,255,.12)"/><path d="M32 12l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#c9f65e"/><path d="M48 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#b79bff"/><path d="M18 36l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#b79bff" opacity=".7"/></svg>
+        <h4>Hair, skin &amp; nails</h4>
+      </div>
+      <p>Beyond hair, TB-500 threads mention faster nail growth, "better skin," and nicks healing quicker — a grab-bag of cosmetic observations with no measurements.</p>
+      <div class="caveat">Caveat: nobody measures these; lighting, grooming, and wishful thinking do the heavy lifting.</div>
+    </div>
+    <div class="anec reveal d1"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(201,246,94,.12)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#c9f65e" stroke-width="3.5"/><text x="32" y="41" text-anchor="middle" fill="#c9f65e" font-size="23" font-weight="800" font-family="inherit">?</text></svg>
+        <h4>The question nobody can answer</h4>
+      </div>
+      <p>A recurring post type: "Has anyone run this long-term? What happened?" The replies are silence or speculation — because no one, researchers included, has long-term human data.</p>
+      <div class="caveat">Caveat: this is the most honest thread format on the forums — an unanswered question.</div>
+    </div>
+    <div class="anec reveal"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(183,155,255,.12)"/><path d="M32 12c6 10 12 16 12 24a12 12 0 0 1-24 0c0-8 6-14 12-24z" fill="#fb7185"/><path d="M27 36a5 5 0 0 0 4 5" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".7"/></svg>
+        <h4>The bloodwork claims</h4>
+      </div>
+      <p>Occasional posters share before-and-after lab numbers — inflammation markers, hormone panels — claiming improvements. The figures are unverified screenshots with no controls.</p>
+      <div class="caveat">Caveat: labs fluctuate day to day; without blinding and proper baselines, numbers are just numbers.</div>
+    </div>
+    <div class="anec reveal d1"><span class="stamp">Unverified anecdote</span>
+      <div class="anec-head">
+        <svg class="thumb" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="rgba(201,246,94,.12)"/><circle cx="32" cy="32" r="14" fill="none" stroke="#b79bff" stroke-width="3"/><circle cx="32" cy="32" r="7" fill="none" stroke="#b79bff" stroke-width="3"/><circle cx="32" cy="32" r="2.5" fill="#fb7185"/><path d="M32 10v6M32 48v6M10 32h6M48 32h6" stroke="#fb7185" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <h4>The injury-specific lore</h4>
+      </div>
+      <p>Certain injuries have their own mini-cults: tennis elbow, Achilles niggles, rotator-cuff irritation — each with dedicated threads full of near-identical recovery stories.</p>
+      <div class="caveat">Caveat: tendinopathies famously wax and wane on their own; "it got better while I took X" is the oldest confound in the book.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHAPTER 6 : SAFETY ================= -->
+<section class="chapter" id="ch6">
+  <div class="eyebrow reveal"><span class="n">06</span> Safety &amp; open questions</div>
+  <h2 class="reveal">What we <span class="hl">don't</span> know can hurt you</h2>
+  <p class="lede reveal">With no human safety record, the risk profile isn't "low" — it's <strong>blank</strong>. Here are the concerns researchers and cautious commentators actually raise.</p>
+
+  <div class="panel reveal">
+    <div class="kv"><span class="k a">Angiogenesis question</span><p>Anything proposed to grow new blood vessels raises a <strong>theoretical tumor concern</strong> — tumors also need blood supply. Unproven in either direction for these compounds in humans; it remains an open question, not a finding.</p></div>
+    <div class="kv"><span class="k a">Long-term unknowns</span><p><strong>No long-term human data exists.</strong> Effects on hormones, fertility, immune function, or cancer risk over years are simply unstudied.</p></div>
+    <div class="kv"><span class="k r">Product risk</span><p>Unregulated sellers mean <strong>unknown contents, unknown sterility, unknown dose accuracy</strong>. Third-party testing of gray-market peptides has repeatedly found products that don't match their labels.</p></div>
+    <div class="kv"><span class="k r">Drug interactions</span><p><strong>Unstudied.</strong> How these fragments interact with medications, blood thinners, or other compounds is unknown — a real concern for anyone on prescriptions.</p></div>
+    <div class="kv"><span class="k v">Sport</span><p><strong>Both are prohibited by WADA.</strong> Tested athletes can face multi-year sanctions; "I bought it online" is not a defense.</p></div>
+    <div class="plain"><span class="plabel">Plain English</span><b>No human safety record exists.</b> "It's a natural fragment" is not the same as "it's safe" — plenty of natural molecules are dangerous, and safety is something you <em>demonstrate</em>, not assume.</div>
+  </div>
+</section>
+
+<!-- ================= CHAPTER 7 : GLOSSARY ================= -->
+<section class="chapter" id="ch7">
+  <div class="eyebrow reveal"><span class="n">07</span> Glossary</div>
+  <h2 class="reveal">Layman <span class="hl">terms</span></h2>
+  <p class="lede reveal">Tap any term for a jargon-free definition.</p>
+  <div class="gloss reveal" id="gloss">
+    <div class="g-item"><button class="g-q"><svg class="gthumb" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(183,155,255,.12)"/><circle cx="9" cy="24" r="5" fill="#b79bff"/><circle cx="20" cy="24" r="5" fill="#b79bff"/><circle cx="31" cy="24" r="5" fill="#b79bff"/><circle cx="42" cy="24" r="5" fill="#c9f65e"/></svg><span class="term">Peptide</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>A peptide is a short polymer of amino acids joined by peptide (amide) bonds — each link formed when the carboxyl group of one amino acid reacts with the amino group of the next, releasing a water molecule. By convention, chains under roughly 50 amino acids are called peptides; longer, folded chains earn the title of protein. A peptide's exact sequence determines its three-dimensional shape, and therefore which receptors, enzymes, or structures it can interact with — which is why a 15-unit chain and a 7-unit chain can have entirely different proposed effects.</p>
+      <p class="gex"><span class="gslabel">Example</span>BPC-157 is just 15 amino acids long and TB-500 only 7 — both far short of protein size, which is exactly why the two halves of the Wolverine Stack are called peptides, not proteins.</p>
+      <div class="plain"><span class="plabel">Plain English</span><b>Amino acids are beads; a peptide is a short bracelet.</b> The order of the beads decides what the bracelet can do — which is why BPC-157's 15-bead chain and TB-500's 7-bead chain are discussed as doing completely different jobs. Short chains like these are also exactly why the two halves of the stack get called peptides instead of proteins.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v2" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(201,246,94,.12)"/><rect x="12" y="22" width="24" height="13" rx="2" fill="#c9f65e"/><circle cx="18" cy="22" r="3" fill="#c9f65e"/><circle cx="26" cy="22" r="3" fill="#c9f65e"/><circle cx="34" cy="22" r="3" fill="#c9f65e"/></svg><span class="term">Amino acids</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>Organic molecules carrying both an amino group (–NH<sub>2</sub>) and a carboxyl group (–COOH) on a central carbon, plus a variable side chain (R group) that gives each of the 20 standard amino acids its chemical personality — small, bulky, water-loving, water-fearing, positively or negatively charged. Cells link them into chains via ribosomes following mRNA blueprints; the resulting sequence dictates how the chain folds and what it can do.</p>
+      <p class="gex"><span class="gslabel">Example</span>TB-500 is literally amino-acid units 17–23 sliced out of the 43-unit thymosin beta-4 chain — take a different slice, or change a single bead, and you no longer have the same fragment at all.</p>
+      <div class="plain"><span class="plabel">Plain English</span>The 20 different Lego bricks your body builds nearly everything from — muscles, enzymes, hormones, you name it. Peptides are just short stacks of them snapped together in a row. When forums say TB-500 is “7 amino acids,” they mean the stack's second half is a chain only seven bricks long.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v3" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(183,155,255,.12)"/><line x1="8" y1="33" x2="40" y2="33" stroke="#3a4160" stroke-width="4" stroke-linecap="round"/><path d="M24 33c0-8 4-10 6-16" stroke="#b79bff" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="15" r="3.5" fill="#c9f65e"/></svg><span class="term">Angiogenesis</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>The physiological process of building new blood vessels out of existing ones. Pro-angiogenic signals — chiefly VEGF (vascular endothelial growth factor) — instruct endothelial cells lining the vessels to proliferate, migrate outward, and hollow into tube-like sprouts. It is essential to wound healing and exercise adaptation — and, problematically, to tumor growth, since tumors hijack the very same signaling to secure their own blood supply.</p>
+      <p class="gex"><span class="gslabel">Example</span>BPC-157's most-discussed proposed mechanism is nudging vessel-growth signals around injured tissue in animal studies — the same process behind the theoretical tumor concern flagged in this page's safety chapter.</p>
+      <div class="plain"><span class="plabel">Plain English</span>Your body's road crew building new side streets so blood can reach a construction site — in this case, healing tissue. It's one of the main things BPC-157 is <i>proposed</i> to encourage in animal studies. The flip side, and the worry: unwanted construction projects (tumors) hire the exact same crew, which is why the safety chapter flags it as an open question rather than a verdict.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(201,246,94,.12)"/><path d="M10 36L38 14M14 14l24 22" stroke="#c9f65e" stroke-width="3" stroke-linecap="round"/><circle cx="10" cy="36" r="3" fill="#b79bff"/><circle cx="38" cy="36" r="3" fill="#b79bff"/></svg><span class="term">Actin</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>A highly conserved globular protein (G-actin) that polymerizes into long helical filaments (F-actin), forming a core pillar of the cytoskeleton. These filaments give cells mechanical structure and — through constant assembly at one end and disassembly at the other, called treadmilling — drive cell crawling, wound closure, and, together with myosin, muscle contraction. The thymosin beta-4 family is known to bind G-actin one-to-one, buffering the pool available for filament building.</p>
+      <p class="gex"><span class="gslabel">Example</span>TB-500's entire proposed mechanism centers on actin: the fragment is thought to bind G-actin and help cells reorganize their scaffolding so they can migrate toward damaged tissue.</p>
+      <div class="plain"><span class="plabel">Plain English</span>The cell's internal scaffolding <i>and</i> its muscles — the rods and ropes that let a cell hold its shape and crawl from place to place. TB-500 is proposed to grab onto these ropes and help repair cells commute to damaged tissue faster. Keep the bead-chain diagram in mind: that whole theory rests on a 7-bead fragment's interaction with this scaffolding.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v2" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(183,155,255,.12)"/><path d="M24 10l4 8 9-2-3 9 8 4-8 4 3 9-9-2-4 8-4-8-9 2 3-9-8-4 8-4-3-9 9 2z" fill="rgba(183,155,255,.3)" stroke="#b79bff" stroke-width="2" stroke-linejoin="round"/><circle cx="24" cy="29" r="5" fill="#b79bff"/></svg><span class="term">Fibroblast</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>Mesenchymal cells of connective tissue whose job is manufacturing the extracellular matrix — chiefly collagen, elastin, and proteoglycans. During wound healing they proliferate, migrate into the damaged area, deposit fresh matrix, and a subset converts into myofibroblasts that physically contract the wound closed. Tendon fibroblasts (tenocytes) perform the same maintenance role specifically for tendon collagen.</p>
+      <p class="gex"><span class="gslabel">Example</span>In BPC-157 animal work, tendon fibroblasts (tenocytes) are among the key cell types studied — the very cells that maintain the tendons forum users hope the stack will heal.</p>
+      <div class="plain"><span class="plabel">Plain English</span>The body's construction workers for connective tissue — they spin the collagen fibers that hold tendons, ligaments, and skin together. When a tendon is injured, these are the cells that show up to rebuild it. They're also among the main cell types researchers studied in the BPC-157 animal work sitting behind all the hype.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v3" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(201,246,94,.12)"/><path d="M20 10h8v12l8 14a4 4 0 0 1-3.5 6h-9a4 4 0 0 1-3.5-6l8-14z" fill="none" stroke="#c9f65e" stroke-width="3" stroke-linejoin="round"/><path d="M22 32h12l2.6 4.6a3 3 0 0 1-2.6 4.4h-7a3 3 0 0 1-2.6-4.4z" fill="#c9f65e" opacity=".55"/></svg><span class="term">Preclinical</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>The research stage before any human testing: <i>in vitro</i> work (cell cultures) and <i>in vivo</i> work (animal models, usually rodents). It maps basic mechanisms, plausible dose ranges, and early toxicity signals. But animal metabolism, immune systems, and disease processes differ from humans in ways that routinely break translation — the overwhelming majority of preclinical findings never become human therapies. Regulators require it <i>before</i> human trials, never <i>instead of</i> them.</p>
+      <p class="gex"><span class="gslabel">Example</span>35 of the 36 published BPC-157 studies were preclinical — rats and cell cultures — which is exactly why this page's evidence chapter stresses how little human data the stack stands on.</p>
+      <div class="plain"><span class="plabel">Plain English</span><b>'Tested in petri dishes and rats, not people.'</b> Interesting — but a long way from proven. Nearly everything you've read about this stack, including the mechanisms described on this page, lives at this stage. Think of it as the starting line of research, not the finish line.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(183,155,255,.12)"/><circle cx="7" cy="24" r="3" fill="#b79bff"/><circle cx="13" cy="24" r="3" fill="#b79bff"/><circle cx="19" cy="24" r="3" fill="#b79bff"/><circle cx="25" cy="24" r="3.6" fill="#c9f65e"/><circle cx="31" cy="24" r="3.6" fill="#c9f65e"/><circle cx="37" cy="24" r="3.6" fill="#c9f65e"/><circle cx="43" cy="24" r="3" fill="#b79bff"/></svg><span class="term">Thymosin beta-4</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>A 43-amino-acid peptide expressed in nearly every mammalian cell type (red blood cells excepted) and the most abundant member of the beta-thymosin family. Its best-characterized role is sequestering G-actin in a one-to-one complex, regulating how much actin is free to build filaments. It has been studied for roles in cell migration, wound repair, calming inflammatory signals, and hair-follicle cycling — and the full-length molecule advanced to Phase 2 clinical trials for certain indications.</p>
+      <p class="gex"><span class="gslabel">Example</span>TB-500 <i>is</i> units 17–23 of this 43-unit parent. The parent reached Phase 2 trials, but the fragment itself has zero human trials — results don't transfer from parent to slice automatically.</p>
+      <div class="plain"><span class="plabel">Plain English</span>A 43-bead chain found in almost every cell in your body, best known for managing the cell's scaffolding supply. <b>TB-500 is just a 7-bead slice of it</b> — units 17 through 23. So when you hear “the parent protein reached Phase 2 trials,” remember: that's the whole loaf, not the slice being sold.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v2" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(201,246,94,.12)"/><g transform="rotate(-30 24 26)"><rect x="12" y="20" width="24" height="12" rx="6" fill="#c9f65e"/><path d="M12 26a6 6 0 0 1 6-6h6v12h-6a6 6 0 0 1-6-6z" fill="#b79bff"/></g></svg><span class="term">Placebo effect</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>Genuine physiological or perceptual improvement driven by expectation, conditioning, and the ritual of treatment rather than the treatment's pharmacology — mediated by real neurobiology, including endogenous opioid and dopamine release. It is strongest for subjective outcomes: pain, fatigue, and perceived recovery — precisely what most peptide anecdotes report. This is why controlled trials use blinding and placebo arms: to subtract expectation from the measurement.</p>
+      <p class="gex"><span class="gslabel">Example</span>Most Wolverine Stack anecdotes report pain relief or 'feeling recovered' — precisely the subjective outcomes where placebo effects hit hardest, which is why this page treats forum reports as stories, not data.</p>
+      <div class="plain"><span class="plabel">Plain English</span>Feeling genuinely better because you <b>expect</b> to get better — your brain releases its own chemistry, and the relief itself is completely real. But real relief with the wrong cause still doesn't prove the compound did anything. That's exactly why this page treats every forum story as a story, never as data.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v3" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(183,155,255,.12)"/><rect x="10" y="28" width="6" height="10" rx="2" fill="#7f88a5"/><rect x="19" y="22" width="6" height="16" rx="2" fill="#7f88a5"/><rect x="28" y="12" width="6" height="26" rx="2" fill="#c9f65e"/><rect x="37" y="30" width="6" height="8" rx="2" fill="#7f88a5"/></svg><span class="term">Survivorship bias</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>A selection bias in which only the 'survivors' are visible: successes get reported, amplified, and remembered while failures go unrecorded. Online communities compound it with vote mechanics — dramatic recoveries rise to the top while 'did nothing for me' posts sink — producing a feed that systematically overstates effectiveness even if every single post is honest.</p>
+      <p class="gex"><span class="gslabel">Example</span>In Wolverine Stack threads, dramatic 'back training weeks early' posts get upvoted to the top while the quiet 'felt nothing' replies sink — the feed ends up looking far more positive than the average experience ever was.</p>
+      <div class="plain"><span class="plabel">Plain English</span>The winners post; the 'nothing happened' crowd stays quiet. <b>What you see online is the highlight reel, not the full season.</b> In Wolverine Stack threads this means the dramatic comebacks float to the top while the boring non-results sink out of sight — making the stack look far more reliable than the average experience ever was.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(201,246,94,.12)"/><circle cx="24" cy="24" r="13" fill="none" stroke="#fb7185" stroke-width="3.5"/><line x1="15" y1="33" x2="33" y2="15" stroke="#fb7185" stroke-width="3.5" stroke-linecap="round"/></svg><span class="term">WADA</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>The World Anti-Doping Agency — the international body coordinating anti-doping in sport through its annually updated Prohibited List. A substance lands on the list by meeting criteria around performance-enhancement potential, health risk, and violation of the spirit of sport. BPC-157 falls under S0 (non-approved substances: anything not approved for human therapeutic use); TB-500, as a thymosin beta-4 derivative, is explicitly named under the S2 peptide-hormone category.</p>
+      <p class="gex"><span class="gslabel">Example</span>Both halves of the Wolverine Stack are banned: BPC-157 under S0 (non-approved substances), TB-500 as a thymosin beta-4 derivative under S2 — so a tested athlete running the stack risks sanctions from either compound.</p>
+      <div class="plain"><span class="plabel">Plain English</span>The global referee for drug-tested sport, publishing the banned-substance list every year. <b>Both halves of this stack are on it</b> — BPC-157 as a non-approved substance, TB-500 as a thymosin beta-4 derivative. For a tested athlete, that means a positive test can cost seasons or a career, no matter where the product was bought.</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v2" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(183,155,255,.12)"/><circle cx="24" cy="24" r="13" fill="none" stroke="#c9f65e" stroke-width="3.5"/><path d="M17 24l5 5 9-10" stroke="#c9f65e" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="term">FDA approval</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>The US Food and Drug Administration's formal authorization, granted only after a sponsor demonstrates safety and efficacy through phased human trials — Phase 1 (safety), Phase 2 (dosing and efficacy signal), Phase 3 (large confirmatory trials) — plus manufacturing review. Approval is indication-specific: cleared for one condition means nothing for another. Neither BPC-157 nor TB-500 has completed this process for any indication whatsoever.</p>
+      <p class="gex"><span class="gslabel">Example</span>Neither BPC-157 nor TB-500 has FDA approval for any use — the Wolverine Stack lives entirely in investigational, gray-market territory, which is why the badge at the top of this page reads 'Investigational · Not FDA-approved.'</p>
+      <div class="plain"><span class="plabel">Plain English</span>The government's official <b>'tested in people and proven to work'</b> stamp, earned only through phased human trials. Neither BPC-157 nor TB-500 has it — for anything, anywhere. It's the single most important status fact on this page, and the reason the badge at the top reads “investigational.”</div>
+    </div></div>
+    <div class="g-item"><button class="g-q"><svg class="gthumb v3" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="rgba(201,246,94,.12)"/><path d="M20 8h8v10l7 12a3.5 3.5 0 0 1-3 5.5h-8a3.5 3.5 0 0 1-3-5.5l7-12z" fill="none" stroke="#b79bff" stroke-width="3" stroke-linejoin="round"/><text x="24" y="31" text-anchor="middle" fill="#b79bff" font-size="14" font-weight="800" font-family="inherit">?</text></svg><span class="term">Investigational</span><span class="plus">+</span></button><div class="g-a">
+      <p class="gsci"><span class="gslabel">The science</span>A formal status meaning a compound is under active study but has <b>not</b> been established as safe and effective for human use. Investigational compounds may only be given to humans inside approved clinical trials with ethics oversight and informed consent; outside that setting, human use is unregulated experimentation with unknown risk — which is exactly the category every gray-market peptide sits in.</p>
+      <p class="gex"><span class="gslabel">Example</span>The Wolverine Stack is investigational twice over: two unapproved compounds, combined on forum theory, with no human trial of the pairing ever run.</p>
+      <div class="plain"><span class="plabel">Plain English</span><b>'Scientists are still figuring this one out.'</b> Interesting enough to study — not proven enough to trust. The Wolverine Stack is investigational twice over: two unapproved compounds, stacked on forum theory, with zero human trials of the combination ever run.</div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ================= CHAPTER 8 : TAKEAWAYS ================= -->
+<section class="chapter" id="ch8">
+  <div class="eyebrow reveal"><span class="n">08</span> Takeaways</div>
+  <h2 class="reveal">The <span class="hl">bottom line</span></h2>
+  <p class="lede reveal">If you remember nothing else, remember these five.</p>
+  <div class="takes">
+    <div class="take reveal"><div class="ic">🧬</div><div><h4>One folk theory, two fragments</h4><p>The stack pairs a proposed "signaler" (BPC-157) with a proposed "mover" (TB-500). The pairing logic comes from forums, not trials.</p></div></div>
+    <div class="take reveal d1"><div class="ic">🔬</div><div><h4>Mechanisms are proposed, not proven</h4><p>Vessel growth, cell migration, repair signaling — all drawn from animal and cell work. Human biology may not cooperate.</p></div></div>
+    <div class="take reveal"><div class="ic">📊</div><div><h4>Human evidence: essentially zero</h4><p>35 of 36 BPC-157 studies are preclinical; TB-500's fragment has no human trials at all. The stack itself has never been trialed.</p></div></div>
+    <div class="take reveal d1"><div class="ic">💬</div><div><h4>The internet runs on stories</h4><p>Enthusiastic reports are real people's experiences — and still not data. Placebo, rest, and survivorship bias explain most of them.</p></div></div>
+    <div class="take reveal"><div class="ic">⚠️</div><div><h4>Banned, unapproved, unregulated</h4><p>Both are WADA-prohibited, neither is an approved medicine, and gray-market product quality is a documented gamble.</p></div></div>
+    <div class="take reveal d1"><div class="ic">🎓</div><div><h4>Education, not a decision</h4><p>This page maps the landscape so you can think clearly — it doesn't recommend for or against anything. Talk to a qualified professional about your own situation.</p></div></div>
+  </div>
+
+  <div class="limits reveal" style="margin-top:2rem">
+    <h3>Limits of this page</h3>
+    <ul>
+      <li><strong>Deliberately absent:</strong> doses, schedules, sourcing, and administration guidance. This page won't help you use these compounds — that's intentional.</li>
+      <li><strong>Not a buying guide:</strong> no sellers, no brands, no "trusted sources." Gray-market quality is unreliable by nature.</li>
+      <li><strong>Evidence moves:</strong> research statuses reflect what's published around 2025–2026. New trials could change the picture — check current literature.</li>
+      <li><strong>Simplified on purpose:</strong> mechanisms are summarized for clarity; the underlying biology is more complex and less settled than any diagram suggests.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<!-- ================= DISCLAIMER ================= -->
+<footer class="disclaimer">
+  <div class="wrap">
+    <h2>⚠️ Disclaimer — please read</h2>
+    <div class="dbox">
+      <p><strong>This page is for educational and informational purposes only.</strong> It is not medical advice, not a diagnosis, not a treatment recommendation, and not an endorsement or encouragement to obtain or use BPC-157, TB-500, or any other compound.</p>
+      <p><strong>Both compounds discussed here are investigational.</strong> Neither is approved by the FDA or any comparable regulator as a medicine for any use. Their safety profiles, effective doses, interactions, and long-term effects in humans are unknown. Anything suggesting otherwise is speculation.</p>
+      <p><strong>Do not use this page to make health decisions.</strong> Always consult a qualified, licensed healthcare professional about any medical condition or before considering any substance. If you are an athlete subject to drug testing, note that both compounds are prohibited by WADA.</p>
+      <p><strong>Anecdotes are not evidence.</strong> Personal reports quoted or paraphrased here are unverified, uncontrolled, and subject to placebo effects, selection bias, and misattribution. They are included to describe internet culture around these compounds — not to support any claim of effectiveness or safety.</p>
+      <p><strong>Limitation of liability:</strong> the author and publisher of this page make no warranties about the accuracy, completeness, or currency of its contents and accept no responsibility for actions taken based on it. Use of any compound mentioned here is solely at your own risk and may violate laws or sporting regulations in your jurisdiction.</p>
+    </div>
+    <div class="fine">
+      <p><strong>No clinician–reader relationship</strong> is created by reading this page. Content is simplified for a general audience and may omit relevant scientific nuance.</p>
+      <p><strong>Research status changes.</strong> Statements about trial counts and regulatory status reflect publicly available information around 2025–2026 and may become outdated.</p>
+      <p><strong>No commercial intent.</strong> This page sells nothing, links to no sellers, and receives no compensation from any peptide vendor.</p>
+    </div>
+    <div class="foot-sign">
+      <span>The Wolverine Stack — Claims vs Evidence · educational infographic</span>
+      <span id="yr"></span>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* freeze SMIL-driven motion for reduced-motion users */
+  if (reduced){
+    document.querySelectorAll("svg").forEach(function(svg){
+      try { svg.pauseAnimations(); } catch(e){}
+    });
+  }
+
+  /* ---------- colorful disappearing dots ---------- */
+  var canvas = document.getElementById("dots"), ctx = canvas.getContext("2d");
+  var W=0, H=0, dots=[], raf=null;
+  function dotPalette(){
+    if (document.documentElement.getAttribute("data-theme")==="light")
+      return {colors:["109,40,217","77,124,15","14,116,144","190,24,93","160,110,20"], alpha:0.38};
+    return {colors:["183,155,255","201,246,94","103,232,249","251,113,133","251,191,36","125,211,252"], alpha:0.55};
+  }
+  function sizeCanvas(){
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    canvas.style.width = W+"px"; canvas.style.height = H+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function spawn(){
+    var pal = dotPalette();
+    var c = pal.colors[(Math.random()*pal.colors.length)|0];
+    var r = 1 + Math.random()*2.6;
+    dots.push({
+      x: Math.random()*W, y: Math.random()*H, r: r,
+      vx: (Math.random()-.5)*0.25, vy: (Math.random()-.5)*0.25,
+      life: 0, max: 240 + Math.random()*300, c: c, aMax: pal.alpha
+    });
+  }
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    if (dots.length < 70 && Math.random() < 0.5) spawn();
+    for (var i=dots.length-1; i>=0; i--){
+      var d = dots[i]; d.life++;
+      d.x += d.vx; d.y += d.vy;
+      var t = d.life/d.max, a;
+      if (t < 0.25) a = t/0.25; else if (t < 0.7) a = 1; else a = 1-(t-0.7)/0.3;
+      a = Math.max(0,a)*d.aMax;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r*(0.7+0.3*Math.sin(d.life*0.05)), 0, 6.2832);
+      ctx.fillStyle = "rgba("+d.c+","+a.toFixed(3)+")";
+      ctx.fill();
+      if (d.life >= d.max) dots.splice(i,1);
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  if (!reduced){
+    sizeCanvas(); window.addEventListener("resize", sizeCanvas); tick();
+    document.addEventListener("visibilitychange", function(){
+      if (document.hidden){ cancelAnimationFrame(raf); raf=null; }
+      else if (!raf){ tick(); }
+    });
+  }
+
+  /* ---------- theme toggle ---------- */
+  var themeBtn = document.getElementById("themeToggle");
+  if (themeBtn){
+    themeBtn.addEventListener("click", function(){
+      var cur = document.documentElement.getAttribute("data-theme")==="light" ? "light" : "dark";
+      var next = cur==="light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("ws-theme", next); } catch(e){}
+      dots.length = 0; /* respawn dots in the new palette */
+    });
+  }
+
+  /* ---------- completion confetti ---------- */
+  var confCanvas = document.getElementById("confetti"),
+      cctx = confCanvas.getContext("2d"),
+      confettiDone = false, confettiPieces = [], confettiRaf = null;
+  var CONF_COLORS = ["183,155,255","201,246,94","103,232,249","251,113,133","251,191,36"];
+  function sizeConfetti(){
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    confCanvas.width = window.innerWidth*dpr;
+    confCanvas.height = window.innerHeight*dpr;
+    confCanvas.style.width = window.innerWidth+"px";
+    confCanvas.style.height = window.innerHeight+"px";
+    cctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function confettiTick(){
+    var W = window.innerWidth, H = window.innerHeight, alive = false, i, p, fade;
+    cctx.clearRect(0,0,W,H);
+    for (i=0;i<confettiPieces.length;i++){
+      p = confettiPieces[i];
+      p.life++; p.sway += p.swaySpd;
+      p.x += p.vx + Math.sin(p.sway)*0.8;
+      p.y += p.vy; p.rot += p.vr;
+      if (p.y > H+30 || p.life >= p.max) continue;
+      alive = true;
+      fade = p.life > p.max-60 ? Math.max(0,(p.max-p.life)/60) : 1;
+      cctx.save();
+      cctx.translate(p.x,p.y); cctx.rotate(p.rot);
+      cctx.fillStyle = "rgba("+p.c+","+(0.85*fade).toFixed(3)+")";
+      if (i%3===0){ cctx.beginPath(); cctx.arc(0,0,p.w/2,0,6.2832); cctx.fill(); }
+      else { cctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); }
+      cctx.restore();
+    }
+    if (alive){ confettiRaf = requestAnimationFrame(confettiTick); }
+    else { confettiRaf = null; confCanvas.classList.remove("show"); confettiPieces = []; }
+  }
+  function launchConfetti(){
+    if (confettiDone || reduced) return;
+    confettiDone = true;
+    sizeConfetti();
+    window.addEventListener("resize", sizeConfetti);
+    var W = window.innerWidth, i;
+    for (i=0;i<70;i++){
+      confettiPieces.push({
+        x: Math.random()*W, y: -20-Math.random()*90,
+        w: 4+Math.random()*5, h: 6+Math.random()*7,
+        vy: 1.2+Math.random()*2.2, vx: (Math.random()-.5)*1.4,
+        rot: Math.random()*6.28, vr: (Math.random()-.5)*0.2,
+        sway: Math.random()*6.28, swaySpd: 0.02+Math.random()*0.04,
+        c: CONF_COLORS[(Math.random()*CONF_COLORS.length)|0],
+        life: 0, max: 240+Math.random()*120
+      });
+    }
+    confCanvas.classList.add("show");
+    var toast = document.getElementById("doneToast");
+    if (toast){
+      toast.classList.add("show");
+      setTimeout(function(){ toast.classList.remove("show"); }, 4200);
+    }
+    confettiRaf = requestAnimationFrame(confettiTick);
+  }
+  var footEl = document.querySelector("footer.disclaimer");
+  if (footEl && "IntersectionObserver" in window){
+    var footObs = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ launchConfetti(); footObs.disconnect(); } });
+    }, {threshold: 0.35});
+    footObs.observe(footEl);
+  }
+
+  /* ---------- scroll progress (lerped for buttery motion) ---------- */
+  var prog = document.getElementById("progress");
+  var tocProg = document.getElementById("tocProg");
+  var tocPct = document.getElementById("tocPct");
+  var progTarget = 0, progShown = 0, progRaf = null;
+  function paintProg(p){
+    prog.style.width = p + "%";
+    if (tocProg) tocProg.style.width = p + "%";
+    if (tocPct) tocPct.textContent = Math.round(p) + "%";
+  }
+  function progTick(){
+    progRaf = null;
+    progShown += (progTarget - progShown) * 0.16;
+    if (Math.abs(progTarget - progShown) < 0.05) progShown = progTarget;
+    paintProg(progShown);
+    if (progShown !== progTarget) progRaf = requestAnimationFrame(progTick);
+  }
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    progTarget = max>0 ? (h.scrollTop/max*100) : 0;
+    if (reduced){ progShown = progTarget; paintProg(progShown); return; }
+    if (progRaf === null) progRaf = requestAnimationFrame(progTick);
+  }
+  window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
+
+  /* ---------- reveal on scroll ---------- */
+  var revEls = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduced){
+    var ro = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add("in"); ro.unobserve(e.target); } });
+    }, {threshold: 0.12, rootMargin: "0px 0px -6% 0px"});
+    revEls.forEach(function(el){ ro.observe(el); });
+  } else {
+    revEls.forEach(function(el){ el.classList.add("in"); });
+  }
+
+  /* ---------- count-up numbers ---------- */
+  var counters = document.querySelectorAll("[data-count]");
+  function countUp(el){
+    var target = parseInt(el.getAttribute("data-count"),10);
+    if (reduced){ el.textContent = target; return; }
+    var t0 = null, dur = 1200;
+    function step(ts){
+      if (!t0) t0 = ts;
+      var p = Math.min((ts-t0)/dur, 1);
+      el.textContent = Math.round(target * (1-Math.pow(1-p,3)));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ("IntersectionObserver" in window){
+    var co = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ countUp(e.target); co.unobserve(e.target); } });
+    }, {threshold: 0.6});
+    counters.forEach(function(el){ co.observe(el); });
+  } else { counters.forEach(countUp); }
+
+  /* ---------- reliable smooth-scroll nav (top rail + sidebar) ---------- */
+  document.querySelectorAll('nav.chapters a[href^="#"], .toc a[href^="#"]').forEach(function(a){
+    a.addEventListener("click", function(ev){
+      var t = document.querySelector(a.getAttribute("href"));
+      if (t){
+        ev.preventDefault();
+        t.scrollIntoView({behavior: reduced ? "auto" : "smooth", block: "start"});
+        try { history.replaceState(null, "", a.getAttribute("href")); } catch(e){}
+      }
+    });
+  });
+
+  /* ---------- scrollspy (highlights both navs) ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('a[data-spy]'));
+  var secs = links.map(function(a){ return document.getElementById(a.getAttribute("data-spy")); })
+                  .filter(Boolean);
+  var tocPill = document.querySelector('.toc .toc-pill');
+  function spy(){
+    var y = window.scrollY + 140, cur = secs[0] ? secs[0].id : null;
+    secs.forEach(function(s){ if (s.offsetTop <= y) cur = s.id; });
+    links.forEach(function(a){ a.classList.toggle("active", a.getAttribute("data-spy")===cur); });
+    if (tocPill){
+      var active = document.querySelector('.toc a[data-spy="' + cur + '"]');
+      if (active){
+        tocPill.style.opacity = "1";
+        tocPill.style.height = active.offsetHeight + "px";
+        tocPill.style.transform = "translateY(" + active.offsetTop + "px)";
+      } else {
+        tocPill.style.opacity = "0";
+      }
+    }
+  }
+  window.addEventListener("scroll", spy, {passive:true});
+  window.addEventListener("resize", spy);
+  window.addEventListener("load", spy);
+  spy();
+
+  /* ---------- glossary accordion ---------- */
+  document.querySelectorAll(".g-item").forEach(function(item){
+    var q = item.querySelector(".g-q"), a = item.querySelector(".g-a");
+    q.addEventListener("click", function(){
+      var open = item.classList.contains("open");
+      document.querySelectorAll(".g-item.open").forEach(function(o){
+        o.classList.remove("open"); o.querySelector(".g-a").style.maxHeight = null;
+      });
+      if (!open){ item.classList.add("open"); a.style.maxHeight = a.scrollHeight + "px"; }
+    });
+  });
+
+  /* ---------- footer year ---------- */
+  document.getElementById("yr").textContent = "© " + new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
