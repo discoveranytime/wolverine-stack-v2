@@ -324,18 +324,16 @@ footer.disclaimer .fine strong{color:var(--muted)}
   .toc .mini-bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px}
 }
 /* ---------- theme toggle button ---------- */
-#themeToggle{position:fixed;top:12px;right:14px;z-index:70;width:44px;height:44px;border-radius:50%;
-  border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:transform .25s ease,background .25s ease;
+#themeToggle{position:fixed;top:12px;right:14px;z-index:70;display:flex;align-items:center;gap:2px;
+  border:1px solid var(--line);background:var(--card);border-radius:999px;padding:3px;
   box-shadow:0 4px 18px rgba(0,0,0,.25)}
-#themeToggle:hover{transform:scale(1.08)}
-#themeToggle:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
-#themeToggle svg{width:20px;height:20px}
-[data-theme="dark"] #themeToggle .ic-sun{display:block}
-[data-theme="dark"] #themeToggle .ic-moon{display:none}
-[data-theme="light"] #themeToggle .ic-sun{display:none}
-[data-theme="light"] #themeToggle .ic-moon{display:block}
-[data-theme="dark"]{color-scheme:dark}
+#themeToggle .tt-opt{display:flex;align-items:center;gap:.35rem;border:0;cursor:pointer;
+  padding:.42rem .7rem;border-radius:999px;background:transparent;color:var(--muted);
+  font:700 .74rem var(--font,sans-serif);letter-spacing:.02em;transition:background .25s ease,color .25s ease}
+#themeToggle .tt-opt svg{width:15px;height:15px}
+#themeToggle .tt-opt:hover{color:var(--ink)}
+#themeToggle .tt-opt:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+#themeToggle .tt-opt.active{background:var(--grad);color:#0a0c14}
 nav.chapters .rail{padding-right:3.8rem}
 /* ---------- light theme: soft gray, easy on the eyes ---------- */
 [data-theme="light"]{
@@ -377,6 +375,149 @@ nav.chapters .rail{padding-right:3.8rem}
 [data-theme="light"] svg [stroke="#edf0f9"]{stroke:#57534a}
 [data-theme="light"] svg [stroke="#3a4160"]{stroke:#d9d3c1}
 </style>
+<style>
+/* ===== mini-poll component ===== */
+/* Mini-poll component styles — compact, theme-aware via CSS vars with fallbacks.
+   Works inside the Retatrutide infographic (which defines --card, --ink, etc.)
+   and standalone. */
+mini-poll { display: block; }
+.mpoll {
+  max-width: 620px;
+  margin: 2.2rem auto;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  background:
+    linear-gradient(var(--card, #0d1020), var(--card, #0d1020)) padding-box,
+    linear-gradient(135deg, var(--mpc1, #7cc7ff), var(--mpc2, #5eead4)) border-box;
+  font-family: inherit;
+  overflow: hidden;
+}
+/* slim collapsed teaser */
+.mpoll-teaser {
+  display: flex; align-items: center; gap: .6rem;
+  width: 100%; cursor: pointer; text-align: left;
+  padding: .75rem 1rem; border: 0; background: transparent;
+  color: var(--muted, #a9b1c9); font-size: .88rem;
+}
+.mpoll-teaser:hover { background: rgba(255,255,255,.03); }
+.mpoll-teaser:focus-visible { outline: 2px solid var(--amber, #fbbf24); outline-offset: -2px; }
+.mpoll-teaser-dot {
+  flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--mpc1, #7cc7ff);
+  box-shadow: 0 0 10px var(--mpc1, #7cc7ff);
+  animation: mpulse 2.4s ease-in-out infinite;
+}
+@keyframes mpulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+.mpoll-teaser-text {
+  flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mpoll-teaser-chev {
+  flex: 0 0 auto; transition: transform .2s; color: var(--faint, #7f88a5);
+}
+.mpoll.open .mpoll-teaser-chev { transform: rotate(180deg); }
+/* animated expand/collapse */
+.mpoll-bodywrap {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows .45s cubic-bezier(.25,.8,.3,1);
+}
+.mpoll.open .mpoll-bodywrap { grid-template-rows: 1fr; }
+.mpoll-clip { overflow: hidden; min-height: 0; }
+.mpoll-body {
+  padding: 0 1.4rem 1.3rem;
+  opacity: 0; transform: translateY(-10px);
+  transition: opacity .32s ease, transform .45s cubic-bezier(.25,.8,.3,1);
+}
+.mpoll.open .mpoll-body { opacity: 1; transform: translateY(0); }
+.mpoll-kicker {
+  font-size: .78rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted, #a9b1c9);
+  margin-bottom: .6rem;
+}
+/* single top-of-page banner (preview mode only) */
+.mpoll-topbanner {
+  display: flex; align-items: center; justify-content: center; gap: .6rem;
+  max-width: 620px; margin: 0 auto 1.4rem; padding: .6rem 1.2rem;
+  border-radius: 999px; font-size: .82rem; font-weight: 700; color: #0a0c14;
+  background: linear-gradient(100deg, var(--acc1, #7cc7ff), var(--acc2, #5eead4), var(--acc3, #fb923c));
+}
+.mpoll-topbanner-dot {
+  flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%;
+  background: #0a0c14;
+  animation: mpulse 2.4s ease-in-out infinite;
+}
+.mpoll-field { border: 0; margin: 0; padding: 0; }
+.mpoll-q {
+  font-size: 1.12rem; font-weight: 800; line-height: 1.35;
+  color: var(--ink, #edf0f9); margin-bottom: .9rem; padding: 0;
+}
+.mpoll-opts { display: grid; gap: .55rem; }
+.mpoll-opt {
+  display: flex; align-items: center; gap: .7rem;
+  width: 100%; text-align: left; cursor: pointer;
+  padding: .72rem .9rem; border-radius: 12px;
+  border: 1px solid var(--line, rgba(255,255,255,.09));
+  background: rgba(255,255,255,.03); color: var(--ink, #edf0f9);
+  font-size: .95rem; transition: border-color .15s, background .15s, transform .15s;
+}
+.mpoll-opt:hover { border-color: var(--amber, #fbbf24); background: rgba(255,255,255,.05); }
+.mpoll-opt:focus-visible { outline: 2px solid var(--amber, #fbbf24); outline-offset: 2px; }
+.mpoll-opt.sel { border-color: var(--amber, #fbbf24); background: rgba(251,191,36,.10); }
+.mpoll-emoji { font-size: 1.25rem; flex: 0 0 auto; }
+.mpoll-label { flex: 1; }
+.mpoll-vote, .mpoll-again {
+  display: block; width: 100%; margin-top: .9rem; padding: .8rem;
+  border: 0; border-radius: 12px; cursor: pointer;
+  font-size: 1rem; font-weight: 800; color: #0a0c14;
+  background: linear-gradient(100deg, var(--acc1, #7cc7ff), var(--acc2, #5eead4));
+  transition: transform .15s, opacity .15s;
+}
+.mpoll-vote:hover:not(:disabled), .mpoll-again:hover { transform: translateY(-1px); }
+.mpoll-vote:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.mpoll-note {
+  margin-top: .7rem; font-size: .88rem; color: #fbbf24;
+  border: 1px dashed rgba(251,191,36,.4); border-radius: 10px; padding: .6rem .8rem;
+}
+.mpoll-bars { display: grid; gap: .6rem; margin-top: .4rem; }
+.mpoll-rowtop {
+  display: flex; justify-content: space-between; gap: .8rem;
+  font-size: .9rem; color: var(--ink, #edf0f9); margin-bottom: .28rem;
+}
+.mpoll-pct { font-weight: 800; color: var(--muted, #a9b1c9); flex: 0 0 auto; }
+.mpoll-mine { color: var(--amber, #fbbf24); font-weight: 700; font-size: .8rem; }
+.mpoll-track {
+  height: 10px; border-radius: 999px; overflow: hidden;
+  background: rgba(255,255,255,.07);
+}
+.mpoll-fill {
+  height: 100%; width: 0; border-radius: 999px;
+  background: linear-gradient(90deg, var(--acc1, #7cc7ff), var(--acc2, #5eead4), var(--acc3, #fb923c));
+  transition: width .9s cubic-bezier(.22,.8,.3,1);
+}
+.mpoll-row.mine .mpoll-fill { box-shadow: 0 0 10px rgba(251,191,36,.45); }
+.mpoll-total {
+  margin-top: .8rem; font-size: .85rem; color: var(--faint, #7f88a5);
+}
+.mpoll-sub { margin-top: .8rem; font-size: .9rem; color: var(--muted, #a9b1c9); }
+.mpoll-count { font-weight: 800; color: var(--ink, #edf0f9); font-variant-numeric: tabular-nums; }
+.mpoll-disc {
+  margin-top: .9rem; padding-top: .7rem;
+  border-top: 1px dashed var(--line, rgba(255,255,255,.09));
+  font-size: .76rem; line-height: 1.5; color: var(--faint, #7f88a5);
+}
+.mpoll-loading { color: var(--faint, #7f88a5); font-size: .9rem; padding: .6rem 0; }
+@media (prefers-reduced-motion: reduce) {
+  .mpoll-opt, .mpoll-vote, .mpoll-again, .mpoll-fill, .mpoll-teaser-chev,
+  .mpoll-bodywrap, .mpoll-body { transition: none; }
+  .mpoll-teaser-dot { animation: none; }
+  .mpoll-body { opacity: 1; transform: none; }
+}
+@media (max-width: 560px) {
+  .mpoll { margin: 1.6rem .2rem; }
+  .mpoll-body { padding: 0 1rem 1.1rem; }
+  .mpoll-q { font-size: 1.02rem; }
+}
+
+</style>
 </head>
 <body>
 <div class="bg-grad"></div>
@@ -387,10 +528,14 @@ nav.chapters .rail{padding-right:3.8rem}
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div id="doneToast" role="status">🎉 You reached the end — nice work getting through it all.</div>
 <div id="progress"></div>
-<button id="themeToggle" aria-label="Toggle light / dark mode" title="Toggle light / dark mode">
-  <svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-  <svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-</button>
+<div id="themeToggle" role="group" aria-label="Color theme">
+  <button type="button" class="tt-opt" data-mode="light" aria-pressed="false">
+    <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg><span>Light</span>
+  </button>
+  <button type="button" class="tt-opt" data-mode="dark" aria-pressed="true">
+    <svg class="ic-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.4 14.2A8.5 8.5 0 0 1 9.8 3.6a.7.7 0 0 0-.9-.9 10.5 10.5 0 1 0 12.4 12.4.7.7 0 0 0-.9-.9Z"/></svg><span>Dark</span>
+  </button>
+</div>
 
 <nav class="chapters" aria-label="Page chapters">
   <div class="rail" id="rail">
@@ -500,6 +645,10 @@ nav.chapters .rail{padding-right:3.8rem}
     </div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch1"
+  data-question="Had you heard of BPC-157 or TB-500 before today?"
+  data-answers='[["🆕", "Neither"], ["👀", "One of them"], ["📖", "Both, vaguely"], ["🧪", "Both, well"]]'>
+</mini-poll>
 
 <!-- ================= CHAPTER 2 : WHY STACK THEM ================= -->
 <section class="chapter" id="ch2">
@@ -569,6 +718,10 @@ nav.chapters .rail{padding-right:3.8rem}
     <div class="plain"><span class="plabel">Plain English</span><b>Two different repair theories in one stack — that's the sales pitch.</b> It sounds clever, but "sounds complementary" is not the same as "shown to work together."</div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch2"
+  data-question="Why stack them — does the logic click for you?"
+  data-answers='[["✅", "Signaler + mover makes sense"], ["🤔", "Clever story, thin proof"], ["📊", "Need the data"], ["🚫", "Marketing logic"]]'>
+</mini-poll>
 
 <!-- ================= CHAPTER 3 : MECHANISMS ================= -->
 <section class="chapter" id="ch3">
@@ -646,6 +799,10 @@ nav.chapters .rail{padding-right:3.8rem}
   </div>
   <div class="callout reveal"><strong>The honest summary:</strong> one is studied for <em>signals and supply lines</em>, the other for <em>cell movement</em> — and both stories come almost entirely from non-human research.</div>
 </section>
+<mini-poll slug="wolv-mini-ch3"
+  data-question="Which mechanism is more compelling?"
+  data-answers='[["📡", "BPC-157 the signaler"], ["🏃", "TB-500 the mover"], ["🤝", "How they converge"], ["🧠", "Neither convinces me yet"]]'>
+</mini-poll>
 <!-- ================= CHAPTER 4 : EVIDENCE CHECK ================= -->
 <section class="chapter" id="ch4">
   <div class="eyebrow reveal"><span class="n">04</span> Honest evidence check</div>
@@ -688,6 +845,10 @@ nav.chapters .rail{padding-right:3.8rem}
     <div class="plain"><span class="plabel">Plain English</span><b>Almost everything "known" comes from rats and petri dishes.</b> No human trials of the stack, no human trials of TB-500 at all, and essentially none of BPC-157 that meet modern standards.</div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch4"
+  data-question="Dozens of animal studies, zero human trials for TB-500 — your reaction?"
+  data-answers='[["🔬", "Animal data counts"], ["📊", "Humans or it didn&#39;t happen"], ["⏳", "Wait and see"], ["⚠️", "That gap worries me"]]'>
+</mini-poll>
 
 <!-- ================= CHAPTER 5 : ANECDOTES ================= -->
 <section class="chapter" id="ch5">
@@ -798,6 +959,10 @@ nav.chapters .rail{padding-right:3.8rem}
     </div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch5"
+  data-question="Forum healing stories — how do you read them?"
+  data-answers='[["💬", "Encouraging"], ["🧂", "Salt required"], ["🚫", "Placebo-prone"], ["⚖️", "Stories aren&#39;t data"]]'>
+</mini-poll>
 
 <!-- ================= CHAPTER 6 : SAFETY ================= -->
 <section class="chapter" id="ch6">
@@ -814,6 +979,10 @@ nav.chapters .rail{padding-right:3.8rem}
     <div class="plain"><span class="plabel">Plain English</span><b>No human safety record exists.</b> "It's a natural fragment" is not the same as "it's safe" — plenty of natural molecules are dangerous, and safety is something you <em>demonstrate</em>, not assume.</div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch6"
+  data-question="Which unknown bothers you most?"
+  data-answers='[["🧪", "Long-term safety"], ["🏭", "What&#39;s actually in the vial"], ["⚖️", "Risk vs reward"], ["❓", "All of it"]]'>
+</mini-poll>
 
 <!-- ================= CHAPTER 7 : GLOSSARY ================= -->
 <section class="chapter" id="ch7">
@@ -883,6 +1052,10 @@ nav.chapters .rail{padding-right:3.8rem}
     </div></div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch7"
+  data-question="Plain-English section — did it land?"
+  data-answers='[["✅", "Yes"], ["📖", "Somewhat"], ["🤷", "Still fuzzy"], ["⏭️", "Skipped it"]]'>
+</mini-poll>
 
 <!-- ================= CHAPTER 8 : TAKEAWAYS ================= -->
 <section class="chapter" id="ch8">
@@ -912,6 +1085,10 @@ nav.chapters .rail{padding-right:3.8rem}
     <div class="take reveal d1"><div class="ic">📦</div><div><h4>Quality talk never stops</h4><p><strong>Underfilled vials, batch roulette, 'is my vial real' threads</strong> — a permanent fixture of the forums. In an unregulated market, trust is the real shortage.</p></div></div>
   </div>
 </section>
+<mini-poll slug="wolv-mini-ch8"
+  data-question="How would you rate this infographic?"
+  data-answers='[["😍", "⭐⭐⭐⭐⭐ · Loved it"], ["🙂", "⭐⭐⭐⭐ · Good stuff"], ["😐", "⭐⭐⭐ · It&#39;s okay"]]'>
+</mini-poll>
 </main>
 
 <!-- ================= DISCLAIMER ================= -->
@@ -999,16 +1176,20 @@ nav.chapters .rail{padding-right:3.8rem}
   }
 
   /* ---------- theme toggle ---------- */
-  var themeBtn = document.getElementById("themeToggle");
-  if (themeBtn){
-    themeBtn.addEventListener("click", function(){
-      var cur = document.documentElement.getAttribute("data-theme")==="light" ? "light" : "dark";
-      var next = cur==="light" ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", next);
-      try { localStorage.setItem("ws-theme", next); } catch(e){}
-      dots.length = 0; /* respawn dots in the new palette */
-    });
-  }
+function setTheme(t){
+  document.documentElement.setAttribute("data-theme",t);
+  try{localStorage.setItem("ws-theme",t)}catch(e){}
+  document.querySelectorAll("#themeToggle .tt-opt").forEach(function(b){
+    var on=b.dataset.mode===t;
+    b.classList.toggle("active",on);
+    b.setAttribute("aria-pressed",on?"true":"false");
+  });
+  if (typeof dots!=="undefined") dots.length = 0; /* respawn dots in the new palette */
+}
+document.querySelectorAll("#themeToggle .tt-opt").forEach(function(b){
+  b.addEventListener("click",function(){setTheme(b.dataset.mode);});
+});
+setTheme(document.documentElement.getAttribute("data-theme")==="light"?"light":"dark");
 
   /* ---------- completion confetti ---------- */
   var confCanvas = document.getElementById("confetti"),
@@ -1187,6 +1368,445 @@ nav.chapters .rail{padding-right:3.8rem}
   /* ---------- footer year ---------- */
   document.getElementById("yr").textContent = "© " + new Date().getFullYear();
 })();
+</script>
+<script>
+/* Mini-poll backend config. Empty = preview mode (local votes, 3-day cooldown).
+   To go live: fill in your Supabase project URL + anon key (see poll-admin README). */
+window.MINI_POLL_CONFIG = { supabaseUrl: "", anonKey: "", turnstileSiteKey: "",
+  accents: ["#b79bff", "#c9f65e", "#a78bfa", "#a3e635", "#c084fc", "#d9f99d", "#8b5cf6", "#65a30d", "#fbbf24"] };
+</script>
+<script>
+/* Mini-poll web component — vanilla JS, no dependencies.
+   Usage:
+     <mini-poll slug="reta-mini-ch1"
+       data-question="Had you heard of retatrutide before today?"
+       data-answers='[["🆕","No — brand new to me"],["👀","Heard the name"]]'>
+     </mini-poll>
+   Add `data-expanded` to start open; otherwise polls start as a slim,
+   collapsed teaser (tap to expand). Questions/answers come from the backend
+   when configured; data-* attributes are the preview fallback.
+   Configure once per page:
+     window.MINI_POLL_CONFIG = { supabaseUrl: "https://xyz.supabase.co",
+                                 anonKey: "eyJ...", turnstileSiteKey: "" };
+   No backend configured -> honest preview mode (localStorage, 3-day cooldown,
+   clearly badged). */
+(function () {
+  'use strict';
+  var CFG = window.MINI_POLL_CONFIG || {};
+  var API = (CFG.supabaseUrl || '').replace(/\/$/, '');
+  var ANON = CFG.anonKey || '';
+
+  function lsKey(slug) { return 'minipoll:' + slug; }
+
+  async function fingerprint() {
+    try {
+      var c = document.createElement('canvas');
+      var x = c.getContext('2d');
+      x.textBaseline = 'top'; x.font = '14px Arial';
+      x.fillText('poll-fp::' + navigator.userAgent, 2, 2);
+      var raw = [navigator.userAgent, screen.width + 'x' + screen.height,
+        screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone,
+        navigator.language, c.toDataURL()].join('|');
+      var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+      return Array.from(new Uint8Array(buf)).map(function (b) {
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+    } catch (e) { return 'fp-' + Math.random().toString(36).slice(2); }
+  }
+
+  function apiHeaders() {
+    return { 'apikey': ANON, 'Authorization': 'Bearer ' + ANON, 'Content-Type': 'application/json' };
+  }
+  async function restGet(path) {
+    var r = await fetch(API + '/rest/v1/' + path, { headers: apiHeaders() });
+    if (!r.ok) throw new Error('api ' + r.status);
+    return r.json();
+  }
+  async function rpc(name, body) {
+    var r = await fetch(API + '/rest/v1/rpc/' + name, {
+      method: 'POST', headers: apiHeaders(), body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error('rpc ' + r.status);
+    return r.json();
+  }
+  async function edge(name, body) {
+    var r = await fetch(API + '/functions/v1/' + name, {
+      method: 'POST', headers: apiHeaders(), body: JSON.stringify(body)
+    });
+    var data = await r.json().catch(function () { return {}; });
+    return { status: r.status, data: data };
+  }
+
+  function fmtCountdown(ms) {
+    if (ms <= 0) return 'now';
+    var s = Math.floor(ms / 1000);
+    var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600),
+        m = Math.floor(s % 3600 / 60), ss = s % 60;
+    if (d > 0) return d + 'd ' + h + 'h';
+    if (h > 0) return h + 'h ' + m + 'm';
+    if (m > 0) return m + 'm ' + ss + 's';
+    return ss + 's';
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* per-poll accent: distinct pulsing-dot color + gradient border per poll.
+     Palette comes from window.MINI_POLL_CONFIG.accents when the page sets one,
+     otherwise the default nine-color set. */
+  var ACCENTS = (window.MINI_POLL_CONFIG && window.MINI_POLL_CONFIG.accents) ||
+                ['#7cc7ff', '#5eead4', '#fb923c', '#a78bfa', '#f472b6',
+                 '#a3e635', '#fbbf24', '#fb7185', '#22d3ee'];
+  function pollAccents(slug) {
+    var m = /ch(\d+)/.exec(slug || '');
+    var i = m ? parseInt(m[1], 10) - 1 : 0;
+    i = ((i % ACCENTS.length) + ACCENTS.length) % ACCENTS.length;
+    return [ACCENTS[i], ACCENTS[(i + 3) % ACCENTS.length]];
+  }
+
+  function MiniPoll() { return Reflect.construct(HTMLElement, [], MiniPoll); }
+  MiniPoll.prototype = Object.create(HTMLElement.prototype);
+  Object.setPrototypeOf(MiniPoll, HTMLElement);
+
+  MiniPoll.prototype.connectedCallback = function () {
+    var self = this;
+    this._slug = this.getAttribute('slug') || '';
+    this._selected = null;
+    this._timer = null;
+    this._refreshTimer = null;
+    this._open = this.hasAttribute('data-expanded');
+    if (!this._slug) { this.style.display = 'none'; return; }
+    this.renderShell();
+    fingerprint().then(function (fp) {
+      self._fp = fp;
+      self.boot();
+    });
+  };
+
+  MiniPoll.prototype.disconnectedCallback = function () {
+    if (this._timer) clearInterval(this._timer);
+    if (this._refreshTimer) clearInterval(this._refreshTimer);
+  };
+
+  /* ---------------- shell: slim teaser + collapsible body ---------------- */
+  MiniPoll.prototype.renderShell = function () {
+    this.innerHTML =
+      '<div class="mpoll">' +
+      '<button type="button" class="mpoll-teaser" aria-expanded="' + (this._open ? 'true' : 'false') + '">' +
+      '<span class="mpoll-teaser-dot" aria-hidden="true"></span>' +
+      '<span class="mpoll-teaser-text"><span class="mpoll-teaser-q">loading…</span></span>' +
+      '<span class="mpoll-teaser-chev" aria-hidden="true">▾</span>' +
+      '</button>' +
+      '<div class="mpoll-bodywrap"' + (this._open ? '' : ' inert') + '>' +
+      '<div class="mpoll-clip"><div class="mpoll-body">' +
+      '<div class="mpoll-loading" aria-live="polite">Loading poll…</div>' +
+      '</div></div></div></div>';
+    this._root = this.querySelector('.mpoll');
+    this._teaser = this.querySelector('.mpoll-teaser');
+    this._teaserQ = this.querySelector('.mpoll-teaser-q');
+    this._wrap = this.querySelector('.mpoll-bodywrap');
+    this._body = this.querySelector('.mpoll-body');
+    var ac = pollAccents(this._slug);
+    this._root.style.setProperty('--mpc1', ac[0]);
+    this._root.style.setProperty('--mpc2', ac[1]);
+    if (this._open) this._root.classList.add('open');
+    var self = this;
+    this._teaser.addEventListener('click', function () { self.toggle(); });
+  };
+
+  MiniPoll.prototype.toggle = function (force) {
+    this._open = typeof force === 'boolean' ? force : !this._open;
+    this._teaser.setAttribute('aria-expanded', this._open ? 'true' : 'false');
+    this._root.classList.toggle('open', this._open);
+    this._wrap.inert = !this._open;
+  };
+
+  MiniPoll.prototype.setTeaser = function (q, voted) {
+    this._teaserQ.textContent = voted ? '✓ you voted · see results' : q;
+  };
+
+  MiniPoll.prototype.showPreviewBanner = function () {
+    if (window.__mpollBannerShown) return;
+    window.__mpollBannerShown = true;
+    var d = document.createElement('div');
+    d.className = 'mpoll-topbanner';
+    d.setAttribute('role', 'note');
+    d.innerHTML = '<span class="mpoll-topbanner-dot" aria-hidden="true"></span>' +
+      '<span>Votes stay in this browser</span>';
+    var main = document.querySelector('main');
+    if (main) { main.insertBefore(d, main.firstChild); return; }
+    var firstChapter = document.querySelector('section.chapter');
+    if (firstChapter && firstChapter.parentNode) {
+      firstChapter.parentNode.insertBefore(d, firstChapter);
+    }
+  };
+
+  MiniPoll.prototype.boot = async function () {
+    try {
+      if (!API) return this.bootPreview();
+      var rows = await restGet('polls?slug=eq.' + encodeURIComponent(this._slug) +
+        '&select=id,slug,title,description,status,hide_results_until_close,require_captcha,disclaimer,cooldown_hours');
+      if (!rows.length) { this.style.display = 'none'; return; }
+      this._poll = rows[0];
+      this.setTeaser(this._poll.description || 'Quick poll', false);
+      var opts = await restGet('poll_options?poll_id=eq.' + this._poll.id +
+        '&select=id,label,emoji,position&order=position.asc');
+      this._options = opts;
+      var st = await edge('vote-status', { poll_id: this._poll.id, fingerprint: this._fp });
+      var s = st.data || {};
+      if (this._poll.status === 'closed') {
+        this.setTeaser(this._poll.description || 'Quick poll', !!s.voted);
+        this.showResults(s.results || { options: [], total: 0 }, s.your_option_id, 'closed');
+      } else if (s.voted && !s.can_revote) {
+        this.setTeaser(this._poll.description || 'Quick poll', true);
+        this.showResults(s.results, s.your_option_id, 'cooldown', s.revote_at);
+      } else {
+        this.showVote();
+      }
+      var self = this;
+      this._refreshTimer = setInterval(function () { self.softRefresh(); }, 45000);
+    } catch (e) {
+      this.bootPreview();
+    }
+  };
+
+  MiniPoll.prototype.softRefresh = async function () {
+    if (!API || !this._poll || this._mode !== 'results' || document.hidden || !this._open) return;
+    try {
+      var res = await rpc('get_public_results', { p_poll_id: this._poll.id });
+      this._lastResults = res;
+      this.paintBars(res);
+    } catch (e) { /* silent */ }
+  };
+
+  /* ---------------- preview mode (no backend) ---------------- */
+  MiniPoll.prototype.bootPreview = function () {
+    this.showPreviewBanner();
+    var q = this.getAttribute('data-question') || 'Quick poll';
+    var answers = [];
+    try { answers = JSON.parse(this.getAttribute('data-answers') || '[]'); } catch (e) {}
+    this._poll = { id: 'preview', title: '🧬 Quick poll', description: q,
+      status: 'open', hide_results_until_close: false, disclaimer: '',
+      cooldown_hours: 72 };
+    this._options = answers.map(function (a, i) {
+      return { id: 'opt' + i, label: a[1], emoji: a[0] };
+    });
+    this._preview = true;
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(lsKey(this._slug)) || 'null'); } catch (e) {}
+    var now = Date.now();
+    if (saved && now - saved.voted_at < 72 * 3600 * 1000) {
+      this._previewVotes = saved.tally || {};
+      this.setTeaser(q, true);
+      this.showResults(this.tallyResults(), saved.option_id, 'cooldown',
+        new Date(saved.voted_at + 72 * 3600 * 1000).toISOString(), true);
+    } else {
+      this.setTeaser(q, false);
+      this.showVote(true);
+    }
+  };
+
+  MiniPoll.prototype.tallyResults = function () {
+    var tally = this._previewVotes || {};
+    var total = Object.keys(tally).reduce(function (s, k) { return s + tally[k]; }, 0);
+    return {
+      hidden: false, total: total,
+      options: this._options.map(function (o) {
+        var v = tally[o.id] || 0;
+        return { option_id: o.id, label: o.label, emoji: o.emoji, votes: v,
+          pct: total ? Math.round(v / total * 1000) / 10 : 0 };
+      })
+    };
+  };
+
+  /* ---------------- vote form ---------------- */
+  MiniPoll.prototype.showVote = function (isPreview) {
+    var self = this;
+    this._mode = 'vote';
+    this._selected = null;
+    var opts = this._options.map(function (o, i) {
+      return '<button type="button" class="mpoll-opt" data-i="' + i + '" aria-pressed="false">' +
+        '<span class="mpoll-emoji" aria-hidden="true">' + esc(o.emoji) + '</span>' +
+        '<span class="mpoll-label">' + esc(o.label) + '</span></button>';
+    }).join('');
+    this._body.innerHTML =
+      '<div class="mpoll-kicker">' + esc(this._poll.title || '🧬 Quick poll') + '</div>' +
+      '<fieldset class="mpoll-field"><legend class="mpoll-q">' + esc(this._poll.description) + '</legend>' +
+      '<div class="mpoll-opts">' + opts + '</div></fieldset>' +
+      '<button type="button" class="mpoll-vote" disabled>Vote</button>' +
+      (this._poll.disclaimer ? '<div class="mpoll-disc">' + esc(this._poll.disclaimer) + '</div>' : '');
+    var btns = this._body.querySelectorAll('.mpoll-opt');
+    var voteBtn = this._body.querySelector('.mpoll-vote');
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        btns.forEach(function (x) { x.classList.remove('sel'); x.setAttribute('aria-pressed', 'false'); });
+        b.classList.add('sel'); b.setAttribute('aria-pressed', 'true');
+        self._selected = parseInt(b.getAttribute('data-i'), 10);
+        voteBtn.disabled = false;
+      });
+    });
+    voteBtn.addEventListener('click', function () { self.castVote(); });
+  };
+
+  MiniPoll.prototype.castVote = async function () {
+    var self = this;
+    var opt = this._options[this._selected];
+    if (!opt) return;
+    var btn = this._body.querySelector('.mpoll-vote');
+    btn.disabled = true; btn.textContent = 'Voting…';
+    if (this._preview) {
+      var tally = this._previewVotes || {};
+      tally[opt.id] = (tally[opt.id] || 0) + 1;
+      this._previewVotes = tally;
+      try {
+        localStorage.setItem(lsKey(this._slug), JSON.stringify({
+          option_id: opt.id, voted_at: Date.now(), tally: tally }));
+      } catch (e) {}
+      this.setTeaser(this._poll.description, true);
+      this.showResults(this.tallyResults(), opt.id, 'cooldown',
+        new Date(Date.now() + 72 * 3600 * 1000).toISOString(), true);
+      return;
+    }
+    try {
+      var body = { poll_id: this._poll.id, option_id: opt.id, fingerprint: this._fp };
+      var res = await edge('mini-vote', body);
+      var d = res.data || {};
+      if (d.error === 'cooldown') {
+        this.setTeaser(this._poll.description, true);
+        this.showResults(d.results, d.your_option_id, 'cooldown', d.revote_at);
+      } else if (d.ok) {
+        try {
+          localStorage.setItem(lsKey(this._slug), JSON.stringify({
+            option_id: opt.id, voted_at: Date.now() }));
+        } catch (e) {}
+        this.setTeaser(this._poll.description, true);
+        this.showResults(d.results, d.your_option_id, 'cooldown', d.revote_at);
+      } else {
+        btn.disabled = false; btn.textContent = 'Vote';
+        this.note(this.friendlyError(d.error));
+      }
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Vote';
+      this.note('Could not reach the poll server. Try again in a moment.');
+    }
+  };
+
+  MiniPoll.prototype.friendlyError = function (code) {
+    return { rate_limited: 'Too many votes from your network right now — try again later.',
+      banned: 'Voting is not available for this device.',
+      poll_closed: 'Voting has closed for this poll.',
+      captcha_failed: 'Please complete the CAPTCHA and try again.',
+      invalid_option: 'That answer is no longer available.' }[code] ||
+      'Something went wrong. Please try again.';
+  };
+
+  MiniPoll.prototype.note = function (msg) {
+    var n = this._body.querySelector('.mpoll-note');
+    if (!n) {
+      n = document.createElement('div');
+      n.className = 'mpoll-note'; n.setAttribute('role', 'alert');
+      this._body.appendChild(n);
+    }
+    n.textContent = msg;
+  };
+
+  /* ---------------- results ---------------- */
+  MiniPoll.prototype.showResults = function (results, yourId, state, revoteAt, isPreview) {
+    var self = this;
+    this._mode = 'results';
+    this._lastResults = results;
+    this._yourId = yourId;
+    this._revoteAt = revoteAt ? new Date(revoteAt).getTime() : 0;
+    var head = '<div class="mpoll-kicker">🔥 Community results</div>';
+    var foot = '';
+    if (state === 'closed') {
+      foot = '<div class="mpoll-sub">Voting has closed — final results.</div>';
+    } else if (state === 'cooldown' && this._revoteAt > Date.now()) {
+      foot = '<div class="mpoll-sub">You can vote again in <span class="mpoll-count" aria-live="off">…</span></div>';
+    } else if (state === 'cooldown') {
+      foot = '<button type="button" class="mpoll-again">🔄 Vote again</button>';
+    }
+    this._body.innerHTML = head +
+      '<div class="mpoll-bars" aria-live="polite"></div>' +
+      '<div class="mpoll-total"></div>' + foot +
+      (this._poll.disclaimer ? '<div class="mpoll-disc">' + esc(this._poll.disclaimer) + '</div>' : '');
+    this.paintBars(results);
+    var again = this._body.querySelector('.mpoll-again');
+    if (again) again.addEventListener('click', function () {
+      self.setTeaser(self._poll.description, false);
+      self.showVote(isPreview);
+    });
+    this.startCountdown();
+  };
+
+  MiniPoll.prototype.paintBars = function (results) {
+    var bars = this._body.querySelector('.mpoll-bars');
+    var totalEl = this._body.querySelector('.mpoll-total');
+    if (!bars) return;
+    if (!results || results.hidden) {
+      bars.innerHTML = '<div class="mpoll-sub">Results unlock when voting closes — ' +
+        (results && results.total || 0) + ' votes so far.</div>';
+      if (totalEl) totalEl.textContent = '';
+      return;
+    }
+    var yourId = this._yourId;
+    bars.innerHTML = results.options.map(function (o) {
+      var mine = String(o.option_id) === String(yourId);
+      return '<div class="mpoll-row' + (mine ? ' mine' : '') + '">' +
+        '<div class="mpoll-rowtop"><span>' + esc(o.emoji) + ' ' + esc(o.label) +
+        (mine ? ' <span class="mpoll-mine">· your pick</span>' : '') + '</span>' +
+        '<span class="mpoll-pct">' + o.pct + '%</span></div>' +
+        '<div class="mpoll-track"><div class="mpoll-fill" style="width:0%"></div></div></div>';
+    }).join('');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var fills = bars.querySelectorAll('.mpoll-fill');
+        results.options.forEach(function (o, i) {
+          if (fills[i]) fills[i].style.width = Math.max(o.pct, o.votes ? 2 : 0) + '%';
+        });
+      });
+    });
+    if (totalEl) totalEl.textContent = (results.total || 0).toLocaleString() +
+      (results.total === 1 ? ' vote' : ' votes');
+  };
+
+  MiniPoll.prototype.startCountdown = function () {
+    var self = this;
+    if (this._timer) clearInterval(this._timer);
+    var el = function () { return self._body && self._body.querySelector('.mpoll-count'); };
+    var tick = function () {
+      var node = el();
+      if (!node) { clearInterval(self._timer); return; }
+      var ms = self._revoteAt - Date.now();
+      if (ms <= 0) {
+        clearInterval(self._timer);
+        var sub = self._body.querySelector('.mpoll-sub');
+        if (sub) {
+          sub.innerHTML = '';
+          var b = document.createElement('button');
+          b.type = 'button'; b.className = 'mpoll-again'; b.textContent = '🔄 Vote again';
+          b.addEventListener('click', function () {
+            self.setTeaser(self._poll.description, false);
+            self.showVote(self._preview);
+          });
+          sub.appendChild(b);
+        }
+        return;
+      }
+      node.textContent = fmtCountdown(ms);
+    };
+    tick();
+    this._timer = setInterval(tick, 1000);
+  };
+
+  if (!window.customElements.get('mini-poll')) {
+    window.customElements.define('mini-poll', MiniPoll);
+  }
+  window.MiniPoll = { version: '1.5.1' };
+})();
+
 </script>
 </body>
 </html>
